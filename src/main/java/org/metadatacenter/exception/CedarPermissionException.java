@@ -1,12 +1,12 @@
 package org.metadatacenter.exception;
 
-import javax.ws.rs.core.Response;
+import org.metadatacenter.http.CedarResponseStatus;
 
 public class CedarPermissionException extends CedarException {
 
   public CedarPermissionException(String message) {
     super(message);
-    errorPack.status(Response.Status.UNAUTHORIZED);
+    errorPack.status(CedarResponseStatus.UNAUTHORIZED);
   }
 
 }

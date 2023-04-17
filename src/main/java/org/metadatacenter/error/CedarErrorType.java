@@ -1,22 +1,21 @@
 package org.metadatacenter.error;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-
-import javax.ws.rs.core.Response;
+import org.metadatacenter.http.CedarResponseStatus;
 
 public enum CedarErrorType {
 
-  NONE(null, Response.Status.OK),
-  NOT_FOUND("notFound", Response.Status.NOT_FOUND),
-  INVALID_ARGUMENT("invalidArgument", Response.Status.BAD_REQUEST),
-  AUTHORIZATION("authorization", Response.Status.UNAUTHORIZED),
-  SERVER_ERROR("server", Response.Status.INTERNAL_SERVER_ERROR),
-  VALIDATION_ERROR("validationError", Response.Status.BAD_REQUEST);
+  NONE(null, CedarResponseStatus.OK),
+  NOT_FOUND("notFound", CedarResponseStatus.NOT_FOUND),
+  INVALID_ARGUMENT("invalidArgument", CedarResponseStatus.BAD_REQUEST),
+  AUTHORIZATION("authorization", CedarResponseStatus.UNAUTHORIZED),
+  SERVER_ERROR("server", CedarResponseStatus.INTERNAL_SERVER_ERROR),
+  VALIDATION_ERROR("validationError", CedarResponseStatus.BAD_REQUEST);
 
   private final String value;
-  private final Response.Status status;
+  private final CedarResponseStatus status;
 
-  CedarErrorType(String value, Response.Status status) {
+  CedarErrorType(String value, CedarResponseStatus status) {
     this.value = value;
     this.status = status;
   }
@@ -26,7 +25,7 @@ public enum CedarErrorType {
     return value;
   }
 
-  public Response.Status getStatus() {
+  public CedarResponseStatus getStatus() {
     return status;
   }
 }

@@ -1,9 +1,8 @@
 package org.metadatacenter.error;
 
+import org.metadatacenter.http.CedarResponseStatus;
 import org.metadatacenter.server.result.BackendCallError;
 import org.metadatacenter.server.result.BackendCallResult;
-
-import javax.ws.rs.core.Response;
 
 public class CedarAssertionResult {
 
@@ -23,27 +22,27 @@ public class CedarAssertionResult {
   }
 
   public CedarAssertionResult internalServerError() {
-    errorPack.status(Response.Status.INTERNAL_SERVER_ERROR);
+    errorPack.status(CedarResponseStatus.INTERNAL_SERVER_ERROR);
     return this;
   }
 
   public CedarAssertionResult forbidden() {
-    errorPack.status(Response.Status.FORBIDDEN);
+    errorPack.status(CedarResponseStatus.FORBIDDEN);
     return this;
   }
 
   public CedarAssertionResult unauthorized() {
-    errorPack.status(Response.Status.UNAUTHORIZED);
+    errorPack.status(CedarResponseStatus.UNAUTHORIZED);
     return this;
   }
 
   public CedarAssertionResult notFound() {
-    errorPack.status(Response.Status.NOT_FOUND);
+    errorPack.status(CedarResponseStatus.NOT_FOUND);
     return this;
   }
 
   public CedarAssertionResult badRequest() {
-    errorPack.status(Response.Status.BAD_REQUEST);
+    errorPack.status(CedarResponseStatus.BAD_REQUEST);
     return this;
   }
 
@@ -62,7 +61,7 @@ public class CedarAssertionResult {
     return this;
   }
 
-  public CedarAssertionResult status(Response.Status status) {
+  public CedarAssertionResult status(CedarResponseStatus status) {
     this.errorPack.status(status);
     return this;
   }

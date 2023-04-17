@@ -1,16 +1,15 @@
 package org.metadatacenter.error;
 
-import org.elasticsearch.ElasticsearchException;
-import org.metadatacenter.exception.CedarProcessingException;
+import org.metadatacenter.http.CedarResponseStatus;
 import org.metadatacenter.operation.CedarOperationDescriptor;
 
-import javax.ws.rs.core.Response;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CedarErrorPack {
 
-  private Response.Status status = Response.Status.INTERNAL_SERVER_ERROR;
+  private CedarResponseStatus status = CedarResponseStatus.INTERNAL_SERVER_ERROR;
   private CedarErrorType errorType = CedarErrorType.NONE;
   private CedarErrorKey errorKey = CedarErrorKey.NONE;
   private CedarErrorReasonKey errorReasonKey = CedarErrorReasonKey.NONE;
@@ -89,11 +88,11 @@ public class CedarErrorPack {
     }
   }
 
-  public Response.Status getStatus() {
+  public CedarResponseStatus getStatus() {
     return status;
   }
 
-  public CedarErrorPack status(Response.Status status) {
+  public CedarErrorPack status(CedarResponseStatus status) {
     this.status = status;
     return this;
   }
@@ -206,16 +205,12 @@ public class CedarErrorPack {
     if (otherException == null) {
       return null;
     }
-    if (otherException instanceof ElasticsearchException) {
-      if (otherException == ((ElasticsearchException) otherException).getRootCause()) {
-        return new CedarFixedRecursiveException(otherException);
-      }
-    }
-    //TODO: Possibly we need to do this unwrapping for all the CedarProcessingException exceptions
-    if (otherException instanceof CedarProcessingException) {
-      Throwable cause = otherException.getCause();
-      if (cause instanceof ElasticsearchException) {
-        return new CedarProcessingException(otherException.getMessage(), new CedarFixedRecursiveException(cause));
+    CedarErrorPackNormalizerRegistry normalizerRegistry = CedarErrorPackNormalizerRegistry.getInstance();
+    List<CedarErrorPackNormalizer> normalizers = normalizerRegistry.getNormalizers();
+    for (CedarErrorPackNormalizer normalizer : normalizers) {
+      Exception normalized = normalizer.normalize(otherException);
+      if (normalized != null) {
+        return normalized;
       }
     }
     return otherException;

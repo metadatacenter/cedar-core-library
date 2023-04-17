@@ -1,7 +1,6 @@
 package org.metadatacenter.server.security.model.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.metadatacenter.id.CedarFilesystemResourceId;
 import org.metadatacenter.server.security.model.permission.resource.FilesystemResourcePermission;
 
@@ -16,7 +15,8 @@ public class CedarNodeMaterializedPermissions {
   private final NodeSharePermission everybodyPermission;
 
 
-  public CedarNodeMaterializedPermissions(CedarFilesystemResourceId resourceId, NodeSharePermission everybodyPermission) {
+  public CedarNodeMaterializedPermissions(CedarFilesystemResourceId resourceId,
+                                          NodeSharePermission everybodyPermission) {
     this.id = resourceId.getId();
     this.everybodyPermission = everybodyPermission;
     userPermissions = new HashMap<>();
