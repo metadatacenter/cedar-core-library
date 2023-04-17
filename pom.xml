@@ -10,7 +10,7 @@
 
   <groupId>org.metadatacenter</groupId>
   <artifactId>cedar-core-library</artifactId>
-  <version>2.6.25-SNAPSHOT</version>
+  <version>2.6.24</version>
 
   <name>CEDAR Core Library</name>
   <description>Library collecting core objects to interact with internal API</description>
@@ -22,7 +22,7 @@
     <connection>scm:git:https://github.com/metadatacenter/cedar-core-library.git</connection>
     <developerConnection>scm:git:https://github.com/metadatacenter/cedar-core-library.git</developerConnection>
     <url>https://github.com/metadatacenter/cedar-core-library</url>
-    <tag>HEAD</tag>
+    <tag>release-2.6.24</tag>
   </scm>
 
   <dependencies>
