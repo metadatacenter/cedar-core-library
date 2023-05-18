@@ -15,7 +15,8 @@ public enum ServerName {
   WORKER("worker"),
   OPENVIEW("openview"),
   MONITOR("monitor"),
-  IMPEX("impex");
+  IMPEX("impex"),
+  BRIDGE("bridge");
 
   private String name;
 

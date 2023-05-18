@@ -4,8 +4,8 @@ import org.metadatacenter.error.CedarErrorKey;
 import org.metadatacenter.error.CedarErrorPack;
 import org.metadatacenter.error.CedarErrorPackException;
 import org.metadatacenter.error.CedarErrorReasonKey;
+import org.metadatacenter.http.CedarResponseStatus;
 
-import javax.ws.rs.core.Response;
 
 public abstract class CedarException extends Exception {
 
@@ -74,7 +74,7 @@ public abstract class CedarException extends Exception {
   }
 
   public CedarException badRequest() {
-    errorPack.status(Response.Status.BAD_REQUEST);
+    errorPack.status(CedarResponseStatus.BAD_REQUEST);
     return this;
   }
 }

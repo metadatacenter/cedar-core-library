@@ -1,11 +1,11 @@
 package org.metadatacenter.exception;
 
-import javax.ws.rs.core.Response;
+import org.metadatacenter.http.CedarResponseStatus;
 
 public class CedarObjectNotFoundException extends CedarException {
 
   public CedarObjectNotFoundException(String message) {
     super(message);
-    errorPack.status(Response.Status.NOT_FOUND);
+    errorPack.status(CedarResponseStatus.NOT_FOUND);
   }
 }

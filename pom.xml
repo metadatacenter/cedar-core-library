@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.metadatacenter</groupId>
     <artifactId>cedar-parent</artifactId>
-    <version>2.6.24</version>
+    <version>2.6.25</version>
   </parent>
 
   <groupId>org.metadatacenter</groupId>
   <artifactId>cedar-core-library</artifactId>
-  <version>2.6.24</version>
+  <version>2.6.25</version>
 
   <name>CEDAR Core Library</name>
-  <description>Library collecting core objects to interact with internal API</description>
+  <description>Library collecting core classes to interact with internal CEDAR API</description>
 
   <properties>
   </properties>
@@ -22,7 +23,6 @@
     <connection>scm:git:https://github.com/metadatacenter/cedar-core-library.git</connection>
     <developerConnection>scm:git:https://github.com/metadatacenter/cedar-core-library.git</developerConnection>
     <url>https://github.com/metadatacenter/cedar-core-library</url>
-    <tag>release-2.6.24</tag>
   </scm>
 
   <dependencies>
@@ -50,16 +50,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>javax.ws.rs-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.elasticsearch.client</groupId>
-      <artifactId>elasticsearch-rest-high-level-client</artifactId>
     </dependency>
 
   </dependencies>
@@ -96,7 +86,7 @@
             </goals>
             <configuration>
               <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
               </transformers>
             </configuration>
           </execution>
@@ -107,7 +97,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
       </plugin>
-      
+
     </plugins>
 
   </build>
