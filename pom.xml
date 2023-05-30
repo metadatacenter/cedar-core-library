@@ -12,6 +12,7 @@
   <groupId>org.metadatacenter</groupId>
   <artifactId>cedar-core-library</artifactId>
   <version>2.6.32-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
   <name>CEDAR Core Library</name>
   <description>Library collecting core classes to interact with internal CEDAR API</description>
