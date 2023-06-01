@@ -57,4 +57,13 @@ public enum SystemComponent {
     }
     return null;
   }
+
+  public static SystemComponent getForUseCase(String useCase) {
+    for (SystemComponent sc : values()) {
+      if (sc.useCase != null && sc.useCase.equals(useCase)) {
+        return sc;
+      }
+    }
+    return null;
+  }
 }
