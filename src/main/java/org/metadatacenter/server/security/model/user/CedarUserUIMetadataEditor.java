@@ -24,5 +24,4 @@ public class CedarUserUIMetadataEditor {
   public void setMetadataJsonViewer(boolean metadataJsonViewer) {
     this.metadataJsonViewer = metadataJsonViewer;
   }
-
 }
