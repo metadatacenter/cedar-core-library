@@ -6,8 +6,6 @@ public class CedarUserUIMetadataEditor {
 
   private boolean metadataJsonViewer;
 
-  private boolean useNewUI;
-
   public CedarUserUIMetadataEditor() {
   }
 
@@ -27,11 +25,4 @@ public class CedarUserUIMetadataEditor {
     this.metadataJsonViewer = metadataJsonViewer;
   }
 
-  public boolean isUseNewUI() {
-    return useNewUI;
-  }
-
-  public void setUseNewUI(boolean useNewUI) {
-    this.useNewUI = useNewUI;
-  }
 }
