@@ -20,6 +20,10 @@ public class CedarUserUIPreferences {
 
   private CedarUserUIMetadataEditor metadataEditor;
 
+  private CedarUserUIMetadataEditorV2 metadataEditorV2;
+
+  private boolean useMetadataEditorV2;
+
   private String stylesheet;
 
   public CedarUserUIPreferences() {
@@ -30,6 +34,8 @@ public class CedarUserUIPreferences {
     infoPanel = new CedarUserUIInfoPanel();
     templateEditor = new CedarUserUITemplateEditor();
     metadataEditor = new CedarUserUIMetadataEditor();
+    metadataEditorV2 = new CedarUserUIMetadataEditorV2();
+    useMetadataEditorV2 = false;
   }
 
   public CedarUserUIPreferences(String jsonSource) {
@@ -42,6 +48,8 @@ public class CedarUserUIPreferences {
       infoPanel = deser.infoPanel;
       templateEditor = deser.templateEditor;
       metadataEditor = deser.metadataEditor;
+      metadataEditorV2 = deser.metadataEditorV2;
+      useMetadataEditorV2 = deser.useMetadataEditorV2;
       stylesheet = deser.stylesheet;
     } catch (IOException e) {
       e.printStackTrace();
@@ -110,5 +118,21 @@ public class CedarUserUIPreferences {
 
   public void setStylesheet(String stylesheet) {
     this.stylesheet = stylesheet;
+  }
+
+  public CedarUserUIMetadataEditorV2 getMetadataEditorV2() {
+    return metadataEditorV2;
+  }
+
+  public void setMetadataEditorV2(CedarUserUIMetadataEditorV2 metadataEditorV2) {
+    this.metadataEditorV2 = metadataEditorV2;
+  }
+
+  public boolean isUseMetadataEditorV2() {
+    return useMetadataEditorV2;
+  }
+
+  public void setUseMetadataEditorV2(boolean useMetadataEditorV2) {
+    this.useMetadataEditorV2 = useMetadataEditorV2;
   }
 }
