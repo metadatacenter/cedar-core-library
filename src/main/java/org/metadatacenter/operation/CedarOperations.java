@@ -20,9 +20,16 @@ public final class CedarOperations {
     return new CedarLookupOperation(clazz, lookupAttributeName, lookupAttributeValue);
   }
 
-  public static CedarCreateOperation create(Class clazz, String primaryIdAttributeName, CedarParameter
-      primaryIdAttributeValue) {
+  public static CedarCreateOperation create(Class clazz, String primaryIdAttributeName, CedarParameter primaryIdAttributeValue) {
     return new CedarCreateOperation(clazz, primaryIdAttributeName, primaryIdAttributeValue);
+  }
+
+  public static CedarCreateOperation create(Class clazz, String primaryIdAttributeName, String primaryIdAttributeValue) {
+    return new CedarCreateOperation(clazz, primaryIdAttributeName, primaryIdAttributeValue);
+  }
+
+  public static CedarCreateWithIdOperation createWithId(Class clazz, String primaryIdAttributeName, String primaryIdAttributeValue) {
+    return new CedarCreateWithIdOperation(clazz, primaryIdAttributeName, primaryIdAttributeValue);
   }
 
   public static CedarUpdateOperation update(Class clazz, String lookupAttributeName, String lookupAttributeValue) {

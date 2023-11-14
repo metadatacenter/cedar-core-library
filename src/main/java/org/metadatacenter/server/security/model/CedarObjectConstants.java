@@ -6,6 +6,8 @@ public final class CedarObjectConstants {
 
   public static final String SEARCH_INDEX = "search_index";
   public static final String RULES_INDEX = "rules_index";
+  public static final String INCLUSION_SUBGRAPH = "inclusion_subgraph";
+
   public static final String LOGGED_IN = "logged_in";
   public static final String NOT_READABLE_NODE = "not_readable_node";
   public static final String NOT_WRITABLE_NODE = "not_writable_node";
