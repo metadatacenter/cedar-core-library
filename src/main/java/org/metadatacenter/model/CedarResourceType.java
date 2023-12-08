@@ -132,4 +132,7 @@ public enum CedarResourceType {
     return this == ELEMENT || this == TEMPLATE || this == FIELD;
   }
 
+  public boolean supportsDOI() {
+    return this == INSTANCE || this == TEMPLATE;
+  }
 }
