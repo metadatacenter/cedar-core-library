@@ -44,6 +44,7 @@ public enum NodeProperty implements CypherQueryParameter {
   CATEGORY_ID(Label.CATEGORY_ID),
   ARTIFACT_ID(Label.ARTIFACT_ID),
   UI_PREFERENCES(Label.UI_PREFERENCES),
+  DOI(Label.DOI),
   SOURCE_HASH(Label.SOURCE_HASH);
 
   public static class Label {
@@ -89,6 +90,7 @@ public enum NodeProperty implements CypherQueryParameter {
     public static final String CATEGORY_ID = "categoryId";
     public static final String ARTIFACT_ID = "artifactId";
     public static final String UI_PREFERENCES = "uiPreferences";
+    public static final String DOI = "doi";
     public static final String SOURCE_HASH = "sourceHash";
   }
 
