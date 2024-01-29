@@ -142,6 +142,7 @@ public enum CedarErrorKey {
   DOI_NOT_SUPPORTED_BY_RESOURCE_TYPE("doiNotSupportedByResourceType"),
   DOI_CAN_NOT_BE_SET_FOR_EMPTY_ATID("doiCanNotBeSetForEmptyAtId"),
   DOI_CAN_NOT_BE_ALTERED("doiCanNotBeAltered"),
+  DOI_CAN_NOT_BE_SET("doiCanNotBeSet"),
 
   RESOURCE_NOT_FOUND("resourceNotFound"),
   INTERNAL_ERROR("internalError");
