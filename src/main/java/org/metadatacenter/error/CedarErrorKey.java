@@ -144,6 +144,7 @@ public enum CedarErrorKey {
   DOI_CAN_NOT_BE_ALTERED("doiCanNotBeAltered"),
   DOI_CAN_NOT_BE_SET("doiCanNotBeSet"),
   DOI_ALREADY_EXISTS("doiAlreadyExists"),
+  DATACITE_DOI_DISABLED("dataCiteDOIDisabled"),
 
 
   RESOURCE_NOT_FOUND("resourceNotFound"),
