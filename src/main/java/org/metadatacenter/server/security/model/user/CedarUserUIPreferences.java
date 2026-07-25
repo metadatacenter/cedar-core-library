@@ -1,9 +1,13 @@
 package org.metadatacenter.server.security.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.metadatacenter.util.json.JsonMapper;
 
 import java.io.IOException;
 
+// Tolerate unknown properties (like CedarUser does) so adding/removing a UI preference in one
+// service does not break deserialization of the user object in other services or from stored data.
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CedarUserUIPreferences {
 
   private CedarUserUIFolderView folderView;
@@ -25,6 +29,10 @@ public class CedarUserUIPreferences {
   private boolean useMetadataEditorV2;
 
   private String stylesheet;
+
+  // User's preferred date format, as a moment.js-style token (e.g. "MM/DD/YYYY"). Defaults non-null
+  // so the value is always present and served up in the user profile.
+  private String preferredDateFormat = "MM/DD/YYYY";
 
   public CedarUserUIPreferences() {
     folderView = new CedarUserUIFolderView();
@@ -51,6 +59,9 @@ public class CedarUserUIPreferences {
       metadataEditorV2 = deser.metadataEditorV2;
       useMetadataEditorV2 = deser.useMetadataEditorV2;
       stylesheet = deser.stylesheet;
+      if (deser.preferredDateFormat != null) {
+        preferredDateFormat = deser.preferredDateFormat;
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -134,5 +145,13 @@ public class CedarUserUIPreferences {
 
   public void setUseMetadataEditorV2(boolean useMetadataEditorV2) {
     this.useMetadataEditorV2 = useMetadataEditorV2;
+  }
+
+  public String getPreferredDateFormat() {
+    return preferredDateFormat;
+  }
+
+  public void setPreferredDateFormat(String preferredDateFormat) {
+    this.preferredDateFormat = preferredDateFormat;
   }
 }
