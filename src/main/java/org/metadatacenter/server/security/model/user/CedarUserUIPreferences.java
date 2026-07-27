@@ -2,6 +2,8 @@ package org.metadatacenter.server.security.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.metadatacenter.util.json.JsonMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -9,6 +11,8 @@ import java.io.IOException;
 // service does not break deserialization of the user object in other services or from stored data.
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CedarUserUIPreferences {
+
+  private static final Logger log = LoggerFactory.getLogger(CedarUserUIPreferences.class);
 
   private CedarUserUIFolderView folderView;
 
@@ -63,7 +67,9 @@ public class CedarUserUIPreferences {
         preferredDateFormat = deser.preferredDateFormat;
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      // The preferences keep their defaults, which is a survivable outcome; log it so a user
+      // reporting that their settings reverted has something to point at.
+      log.error("Could not deserialize the stored UI preferences; keeping the defaults", e);
     }
   }
 
