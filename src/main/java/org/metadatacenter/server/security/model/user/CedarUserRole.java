@@ -9,6 +9,7 @@ public enum CedarUserRole {
   METADATA_CREATOR("metadataCreator"),
   USER_ADMINISTRATOR("userAdministrator"),
   GROUP_ADMINISTRATOR("groupAdministrator"),
+  GROUP_PRIVILEGED_ADMINISTRATOR("groupPrivilegedAdministrator"),
   FILESYSTEM_ADMINISTRATOR("filesystemAdministrator"),
   CATEGORY_ADMINISTRATOR("categoryAdministrator"),
   CATEGORY_PRIVILEGED_ADMINISTRATOR("categoryPrivilegedAdministrator"),

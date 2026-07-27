@@ -106,6 +106,7 @@ public enum CedarErrorKey {
   READ_OTHER_PROFILE_FORBIDDEN("readOtherProfileForbidden"),
   UPDATE_OTHER_PROFILE_FORBIDDEN("updateOtherProfileForbidden"),
   FOLDER_CAN_NOT_BE_DELETED("folderCanNotBeDeleted"),
+  FOLDER_CAN_NOT_BE_CHANGED("folderCanNotBeChanged"),
   GROUP_ALREADY_PRESENT("groupAlreadyPresent"),
   GROUP_CAN_BY_MODIFIED_ONLY_BY_GROUP_ADMIN("groupCanBeModifiedOnlyByGroupAdmin"),
   GROUP_CAN_BY_DELETED_ONLY_BY_GROUP_ADMIN("groupCanBeDeletedOnlyByGroupAdmin"),
