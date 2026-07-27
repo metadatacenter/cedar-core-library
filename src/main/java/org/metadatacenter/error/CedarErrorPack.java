@@ -11,6 +11,17 @@ public class CedarErrorPack {
 
   private CedarResponseStatus status = CedarResponseStatus.INTERNAL_SERVER_ERROR;
   private CedarErrorType errorType = CedarErrorType.NONE;
+
+  /**
+   * Whether {@link #status(CedarResponseStatus)} was called for this pack.
+   *
+   * <p>Needed because {@link #errorType(CedarErrorType)} derives the status from the type, and an
+   * explicitly chosen status must win whichever order the two are called in. Several callers pick a
+   * status and a type independently — {@code CedarAssertionResult} offers {@code forbidden()} and
+   * {@code errorType()} as separate builder steps — so deriving unconditionally would silently turn a
+   * deliberate 403 into the type's default.
+   */
+  private boolean statusChosenExplicitly = false;
   private CedarErrorKey errorKey = CedarErrorKey.NONE;
   private CedarErrorReasonKey errorReasonKey = CedarErrorReasonKey.NONE;
   private String message;
@@ -32,6 +43,8 @@ public class CedarErrorPack {
     this();
     if (other != null) {
       status = other.getStatus();
+      // Carried over so a status the original chose is not later overwritten by a derive on the copy.
+      statusChosenExplicitly = other.statusChosenExplicitly;
       errorType = other.getErrorType();
       errorKey = other.getErrorKey();
       errorReasonKey = other.getErrorReasonKey();
@@ -49,6 +62,7 @@ public class CedarErrorPack {
   public void merge(CedarErrorPack other) {
     if (other.status != null) {
       status = other.getStatus();
+      statusChosenExplicitly = statusChosenExplicitly || other.statusChosenExplicitly;
     }
     if (other.errorType != null) {
       errorType = other.getErrorType();
@@ -94,6 +108,7 @@ public class CedarErrorPack {
 
   public CedarErrorPack status(CedarResponseStatus status) {
     this.status = status;
+    this.statusChosenExplicitly = true;
     return this;
   }
 
@@ -101,8 +116,26 @@ public class CedarErrorPack {
     return errorType;
   }
 
+  /**
+   * Records the kind of error, and adopts the status that kind implies unless one was chosen
+   * explicitly.
+   *
+   * <p>The status used to default to 500 and stay there: {@link CedarErrorType} declares the right
+   * status for each kind — {@code INVALID_ARGUMENT} is a 400 — but nothing consulted it except
+   * {@code BackendCallError}. Every other place that built a pack with a type and no status reported a
+   * client's mistake as a server fault, with the response body correctly describing itself as
+   * {@code invalidArgument} beside a 500. Deriving here fixes those at the source rather than asking
+   * every construction site to remember.
+   *
+   * <p>{@link CedarErrorType#NONE} maps to 200 and is the initial value, so it is deliberately not
+   * derived from: adopting it would turn an error response into a success.
+   */
   public CedarErrorPack errorType(CedarErrorType errorType) {
     this.errorType = errorType;
+    if (!statusChosenExplicitly && errorType != null && errorType != CedarErrorType.NONE
+        && errorType.getStatus() != null) {
+      this.status = errorType.getStatus();
+    }
     return this;
   }
 
