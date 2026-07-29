@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.metadatacenter.server.security.model.permission.resource.ResourcePermissionGroupPermissionPair;
 
+import java.util.Objects;
+
 public enum NodeSharePermission {
 
   READ(Type.READ),
@@ -38,7 +40,10 @@ public enum NodeSharePermission {
   @JsonCreator
   public static NodeSharePermission forValue(String type) {
     for (NodeSharePermission t : values()) {
-      if (t.getValue().equals(type)) {
+      // Objects.equals is null-safe both ways: NONE's value is deliberately null, so a plain
+      // t.getValue().equals(type) throws when the loop reaches NONE. A null or unknown input now maps
+      // to NONE (matching NONE's null value, or falling through to the return below) instead of NPEing.
+      if (Objects.equals(t.getValue(), type)) {
         return t;
       }
     }
