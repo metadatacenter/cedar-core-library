@@ -56,6 +56,7 @@ public enum CedarErrorKey {
   FOLDER_NOT_FOUND("folderNotFound"),
 
   ARTIFACT_NOT_FOUND("artifactNotFound"),
+  ARTIFACT_HAS_MOVED_ON("artifactHasMovedOn"),
 
   NODE_NOT_FOUND("nodeNotFound"),
 
