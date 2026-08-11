@@ -56,6 +56,10 @@ public enum CedarResourceType {
     public static final String FIELD = AT_TYPE_PREFIX + "TemplateField";
     public static final String ELEMENT = AT_TYPE_PREFIX + "TemplateElement";
     public static final String TEMPLATE = AT_TYPE_PREFIX + "Template";
+    // A static field is a field for every purpose the resource types serve: it is stored under the field
+    // prefix and there is no separate resource type for it. It needs its own '@type' only because the
+    // meta-schemas give it one.
+    public static final String STATIC_FIELD = AT_TYPE_PREFIX + "StaticTemplateField";
   }
 
   private final String value;
