@@ -56,6 +56,7 @@ public enum CedarErrorKey {
   FOLDER_NOT_FOUND("folderNotFound"),
 
   ARTIFACT_NOT_FOUND("artifactNotFound"),
+  VERBATIM_WRITE_REFUSED("verbatimWriteRefused"),
 
   NODE_NOT_FOUND("nodeNotFound"),
 
