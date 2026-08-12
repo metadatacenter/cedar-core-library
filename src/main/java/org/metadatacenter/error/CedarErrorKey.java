@@ -111,6 +111,7 @@ public enum CedarErrorKey {
   GROUP_ALREADY_PRESENT("groupAlreadyPresent"),
   GROUP_CAN_BY_MODIFIED_ONLY_BY_GROUP_ADMIN("groupCanBeModifiedOnlyByGroupAdmin"),
   GROUP_CAN_BY_DELETED_ONLY_BY_GROUP_ADMIN("groupCanBeDeletedOnlyByGroupAdmin"),
+  GROUP_USERS_NOT_UPDATED("groupUsersNotUpdated"),
   SPECIAL_GROUP_CAN_NOT_BE_DELETED("specialGroupCanNotBeDeleted"),
   FOLDER_PERMISSIONS_CAN_NOT_BE_CHANGED("folderPermissionsCanNotBeChanged"),
   UNKNOWN_INSTANCE_OUTPUT_FORMAT("unknownInstanceOutputFormat"),

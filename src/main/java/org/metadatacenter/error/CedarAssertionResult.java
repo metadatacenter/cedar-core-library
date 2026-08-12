@@ -46,6 +46,11 @@ public class CedarAssertionResult {
     return this;
   }
 
+  public CedarAssertionResult conflict() {
+    errorPack.status(CedarResponseStatus.CONFLICT);
+    return this;
+  }
+
   public CedarAssertionResult parameter(String name, Object value) {
     this.errorPack.parameter(name, value);
     return this;
