@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.metadatacenter.id.CedarGroupId;
-import org.metadatacenter.server.security.model.permission.resource.ResourcePermissionGroup;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CategoryPermissionGroup {
@@ -37,7 +36,7 @@ public class CategoryPermissionGroup {
       return false;
     }
 
-    ResourcePermissionGroup that = (ResourcePermissionGroup) o;
+    CategoryPermissionGroup that = (CategoryPermissionGroup) o;
 
     return !(getId() != null ? !getId().equals(that.getId()) : that.getId() != null);
 

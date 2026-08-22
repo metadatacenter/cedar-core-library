@@ -54,6 +54,10 @@ public enum CedarPermission {
   UPDATE_PERMISSION_NOT_WRITABLE_CATEGORY(CedarObjectConstants.NOT_WRITABLE_CATEGORY_PERMISSIONS, CedarObjectConstants.ACCESS_UPDATE),
   SEND_PROCESS_MESSAGE(CedarObjectConstants.PROCESS_MESSAGE, CedarObjectConstants.ACCESS_CREATE),
   UPDATE_NOT_ADMINISTERED_GROUP(CedarObjectConstants.NOT_ADMINISTERED_GROUP, CedarObjectConstants.ACCESS_UPDATE),
+  // Replace an artifact with exactly the document supplied, leaving provenance and child identifiers
+  // as the request states them. It can therefore attribute a write to another user, which is why it
+  // sits in a privileged role of its own rather than with the ordinary update permissions.
+  WRITE_ARTIFACT_VERBATIM(CedarObjectConstants.ARTIFACT_VERBATIM, CedarObjectConstants.ACCESS_WRITE),
 
   MONITOR_READ(CedarObjectConstants.MONITOR, CedarObjectConstants.ACCESS_READ);
 

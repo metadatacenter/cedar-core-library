@@ -13,6 +13,7 @@ public enum CedarUserRole {
   FILESYSTEM_ADMINISTRATOR("filesystemAdministrator"),
   CATEGORY_ADMINISTRATOR("categoryAdministrator"),
   CATEGORY_PRIVILEGED_ADMINISTRATOR("categoryPrivilegedAdministrator"),
+  ARTIFACT_PRIVILEGED_ADMINISTRATOR("artifactPrivilegedAdministrator"),
   SEARCH_REINDEXER("searchReindexer"),
   PROCESS_MESSAGE_SENDER("processMessageSender"),
   MONITOR_MANAGER("monitorManager");
