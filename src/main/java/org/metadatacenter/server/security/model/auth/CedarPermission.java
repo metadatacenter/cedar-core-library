@@ -95,4 +95,24 @@ public enum CedarPermission {
     }
     return null;
   }
+
+  public static CedarPermission getCreateForArtifactType(CedarResourceType artifactType) {
+    return switch (artifactType) {
+      case FIELD -> TEMPLATE_FIELD_CREATE;
+      case ELEMENT -> TEMPLATE_ELEMENT_CREATE;
+      case TEMPLATE -> TEMPLATE_CREATE;
+      case INSTANCE -> TEMPLATE_INSTANCE_CREATE;
+      default -> null;
+    };
+  }
+
+  public static CedarPermission getUpdateForArtifactType(CedarResourceType artifactType) {
+    return switch (artifactType) {
+      case FIELD -> TEMPLATE_FIELD_UPDATE;
+      case ELEMENT -> TEMPLATE_ELEMENT_UPDATE;
+      case TEMPLATE -> TEMPLATE_UPDATE;
+      case INSTANCE -> TEMPLATE_INSTANCE_UPDATE;
+      default -> null;
+    };
+  }
 }
