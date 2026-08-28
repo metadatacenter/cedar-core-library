@@ -1,8 +1,13 @@
 package org.metadatacenter.server.security.model.user;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.HexFormat;
 
 public class CedarUserApiKey {
+  private String id;
   private String key;
   private String serviceName;
   private String description;
@@ -10,6 +15,25 @@ public class CedarUserApiKey {
   private boolean enabled;
 
   public CedarUserApiKey() {
+  }
+
+  /**
+   * A stable, non-secret identifier used by API-key management routes.
+   *
+   * <p>Keys stored before identifiers were introduced acquire a deterministic identifier from the
+   * existing 256-bit random secret. This keeps the identifier stable across reads before the user is
+   * next written, without exposing the secret itself. Newly issued keys receive an independent UUID
+   * before they are stored.</p>
+   */
+  public String getId() {
+    if (id == null && key != null) {
+      id = legacyIdForKey(key);
+    }
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public String getKey() {
@@ -51,5 +75,14 @@ public class CedarUserApiKey {
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
   }
-}
 
+  private static String legacyIdForKey(String key) {
+    try {
+      MessageDigest digest = MessageDigest.getInstance("SHA-256");
+      byte[] hash = digest.digest(("cedar-api-key:" + key).getBytes(StandardCharsets.UTF_8));
+      return "legacy-" + HexFormat.of().formatHex(hash);
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalStateException("SHA-256 is unavailable", e);
+    }
+  }
+}
