@@ -7,6 +7,7 @@ public enum CedarErrorReasonKey {
   NONE(null),
 
   NON_EMPTY_FOLDER("nonEmptyFolder"),
+  NON_EMPTY_CATEGORY("nonEmptyCategory"),
   USER_HOME_FOLDER("userHomeFolder"),
   SYSTEM_FOLDER("systemFolder"),
   TEMPLATE_REFERENCED_IN_INSTANCES("templateReferencedInInstances"),
