@@ -106,6 +106,30 @@ public class CedarErrorPack {
     return status;
   }
 
+  /**
+   * The numeric status, so a client does not have to map the enum name back to one.
+   *
+   * <p>{@link CedarResponseStatus} serializes as its constant name, so an exception-mapped failure
+   * carried {@code "status": "NOT_FOUND"} and no number, while a refusal built through
+   * {@code CedarResponse} carried {@code statusCode}. Reading one field worked against half the
+   * failures in the system.
+   */
+  public int getStatusCode() {
+    return status == null ? CedarResponseStatus.INTERNAL_SERVER_ERROR.getStatusCode() : status.getStatusCode();
+  }
+
+  /**
+   * The message under the key {@code CedarResponse} uses for it.
+   *
+   * <p>The two shapes name the same thing differently: this pack calls it {@code message}, and a refusal
+   * built through {@code CedarResponse} calls it {@code errorMessage}. Both keys are now present and
+   * carry the same value, so a client reading either gets the message rather than null from whichever
+   * half of the system it happened to reach.
+   */
+  public String getErrorMessage() {
+    return getMessage();
+  }
+
   public CedarErrorPack status(CedarResponseStatus status) {
     this.status = status;
     this.statusChosenExplicitly = true;
