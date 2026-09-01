@@ -10,6 +10,10 @@ public enum RelationLabel {
   MEMBEROF(PlainLabels.MEMBEROF, null, null),
   CANREAD(PlainLabels.CANREAD, FilesystemResourcePermission.READ, null),
   CANWRITE(PlainLabels.CANWRITE, FilesystemResourcePermission.WRITE, null),
+  CANCHANGEOWNER(PlainLabels.CANCHANGEOWNER, FilesystemResourcePermission.CHANGEOWNER, null),
+  CANCHANGEPERMISSIONS(PlainLabels.CANCHANGEPERMISSIONS, FilesystemResourcePermission.CHANGEPERMISSIONS, null),
+  CANPUBLISH(PlainLabels.CANPUBLISH, FilesystemResourcePermission.PUBLISH, null),
+  CANCREATEDRAFT(PlainLabels.CANCREATEDRAFT, FilesystemResourcePermission.CREATE_DRAFT, null),
   ADMINISTERS(PlainLabels.ADMINISTERS, null, null),
   PREVIOUSVERSION(PlainLabels.PREVIOUSVERSION, null, null),
   DERIVEDFROM(PlainLabels.DERIVEDFROM, null, null),
@@ -27,6 +31,10 @@ public enum RelationLabel {
     public static final String MEMBEROF = "MEMBEROF";
     public static final String CANREAD = "CANREAD";
     public static final String CANWRITE = "CANWRITE";
+    public static final String CANCHANGEOWNER = "CANCHANGEOWNER";
+    public static final String CANCHANGEPERMISSIONS = "CANCHANGEPERMISSIONS";
+    public static final String CANPUBLISH = "CANPUBLISH";
+    public static final String CANCREATEDRAFT = "CANCREATEDRAFT";
     public static final String ADMINISTERS = "ADMINISTERS";
     public static final String PREVIOUSVERSION = "PREVIOUSVERSION";
     public static final String DERIVEDFROM = "DERIVEDFROM";

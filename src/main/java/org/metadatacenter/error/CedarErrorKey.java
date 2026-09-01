@@ -124,6 +124,7 @@ public enum CedarErrorKey {
   PARENT_CATEGORY_NOT_FOUND("parentCategoryNotFound"),
   CATEGORY_ALREADY_PRESENT("categoryAlreadyPresent"),
   CATEGORY_NOT_FOUND("categoryNotFound"),
+  CATEGORY_CAN_NOT_BE_DELETED("categoryCanNotBeDeleted"),
   ROOT_CATEGORY_CAN_NOT_BE_DELETED("rootCategoryCanNotBeDeleted"),
   UNABLE_TO_ATTACH_CATEGORY("unableToAttachCategory"),
   UNABLE_TO_DETACH_CATEGORY("unableToDetachCategory"),
