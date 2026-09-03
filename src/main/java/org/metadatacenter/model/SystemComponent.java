@@ -22,7 +22,20 @@ public enum SystemComponent {
   FRONTEND_PRODUCTION("frontend-production"),
   ADMIN_TOOL("admin-tool"),
   CADSR_TOOL("cadsr-tool"),
-  KEYCLOAK_EVENT_LISTENER("keycloak-event-listener"), // keycloak standalone.xml
+  // The infrastructure CEDAR runs on. None of it is a JVM: these are nginx templates, container init
+  // scripts and docker-compose, which read the environment directly and never touch the Java
+  // configuration model. Split by service rather than kept as one "infra" because they share nothing —
+  // the certificate authority and the reverse proxy have no variables and no failures in common, and a
+  // single column would say only "some part of the infrastructure reads this".
+  INFRA_NGINX("infra-nginx"),
+  INFRA_MONGO("infra-mongo"),
+  INFRA_MYSQL("infra-mysql"),
+  INFRA_NEO4J("infra-neo4j"),
+  INFRA_CA("infra-ca"),
+  INFRA_DOCKER("infra-docker"),
+  KEYCLOAK_SERVER("keycloak-server"), // Keycloak itself: its datasource, ports and CA, from standalone.xml
+  KEYCLOAK_EVENT_LISTENER("keycloak-event-listener"), // the CEDAR listener deployed into Keycloak
+  CEDAR_CLI("cedar-cli"), // the Python CLI: build, release and mode management
   UTIL_BIN("util-bin"), // shell scripts in cedar-util/bin
   ALL("all"); // generic case, include all variables
 
