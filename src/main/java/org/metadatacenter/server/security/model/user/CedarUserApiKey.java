@@ -1,11 +1,19 @@
 package org.metadatacenter.server.security.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.HexFormat;
 
+/**
+ * A stored API key. Unknown properties are ignored on purpose: these objects are read back from
+ * user records written by earlier releases, and a field that a later release adds or removes must
+ * not make the stored key set unreadable.
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CedarUserApiKey {
   private String id;
   private String key;
