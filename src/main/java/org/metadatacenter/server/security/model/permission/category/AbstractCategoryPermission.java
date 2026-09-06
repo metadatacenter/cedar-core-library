@@ -2,7 +2,7 @@ package org.metadatacenter.server.security.model.permission.category;
 
 public abstract class AbstractCategoryPermission {
 
-  protected CategoryPermission permission;
+  protected CategoryRole role;
   protected static final String KEY_SEPARATOR = "|";
 
   public AbstractCategoryPermission() {
@@ -10,20 +10,20 @@ public abstract class AbstractCategoryPermission {
 
   protected abstract String getObjectId();
 
-  public CategoryPermission getPermission() {
-    return permission;
+  public CategoryRole getRole() {
+    return role;
   }
 
-  public void setPermission(CategoryPermission permission) {
-    this.permission = permission;
+  public void setRole(CategoryRole role) {
+    this.role = role;
   }
 
   public String getKey() {
-    return getKey(getObjectId(), permission);
+    return getKey(getObjectId(), role);
   }
 
-  public static String getKey(String objectId, CategoryPermission permission) {
-    return objectId + KEY_SEPARATOR + permission.getValue();
+  public static String getKey(String objectId, CategoryRole role) {
+    return objectId + KEY_SEPARATOR + role.getValue();
   }
 
   public static String getId(String key) {

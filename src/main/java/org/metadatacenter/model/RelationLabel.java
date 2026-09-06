@@ -1,6 +1,6 @@
 package org.metadatacenter.model;
 
-import org.metadatacenter.server.security.model.permission.category.CategoryPermission;
+import org.metadatacenter.server.security.model.permission.category.CategoryRole;
 import org.metadatacenter.server.security.model.permission.resource.ResourceRole;
 
 public enum RelationLabel {
@@ -10,16 +10,16 @@ public enum RelationLabel {
   MEMBEROF(PlainLabels.MEMBEROF, null, null),
   CANREAD(PlainLabels.CANREAD, ResourceRole.VIEWER, null),
   CANWRITE(PlainLabels.CANWRITE, ResourceRole.MANAGER, null),
-  EDITOR_ROLE(PlainLabels.EDITOR_ROLE, ResourceRole.EDITOR, null),
-  VIEWER_ROLE(PlainLabels.VIEWER_ROLE, ResourceRole.VIEWER, null),
+  EDITOR_ROLE(PlainLabels.EDITOR_ROLE, ResourceRole.EDITOR, CategoryRole.EDITOR),
+  VIEWER_ROLE(PlainLabels.VIEWER_ROLE, ResourceRole.VIEWER, CategoryRole.VIEWER),
   MANAGER_ROLE(PlainLabels.MANAGER_ROLE, ResourceRole.MANAGER, null),
   ADMINISTERS(PlainLabels.ADMINISTERS, null, null),
   PREVIOUSVERSION(PlainLabels.PREVIOUSVERSION, null, null),
   DERIVEDFROM(PlainLabels.DERIVEDFROM, null, null),
   //
   CONTAINSCATEGORY(PlainLabels.CONTAINSCATEGORY, null, null),
-  CANATTACHCATEGORY(PlainLabels.CANATTACHCATEGORY, null, CategoryPermission.ATTACH),
-  CANWRITECATEGORY(PlainLabels.CANWRITECATEGORY, null, CategoryPermission.WRITE),
+  CANATTACHCATEGORY(PlainLabels.CANATTACHCATEGORY, null, CategoryRole.CLASSIFIER),
+  CANWRITECATEGORY(PlainLabels.CANWRITECATEGORY, null, CategoryRole.MANAGER),
   OWNSCATEGORY(PlainLabels.OWNSCATEGORY, null, null),
   CONTAINSARTIFACT(PlainLabels.CONTAINSARTIFACT, null, null),
   INCLUDES(PlainLabels.INCLUDES, null, null);
@@ -47,21 +47,21 @@ public enum RelationLabel {
 
   private final String value;
   private final ResourceRole resourceRole;
-  private final CategoryPermission categoryPermission;
+  private final CategoryRole categoryRole;
 
   RelationLabel(String value, ResourceRole resourceRole,
-                CategoryPermission categoryPermission) {
+                CategoryRole categoryRole) {
     this.value = value;
     this.resourceRole = resourceRole;
-    this.categoryPermission = categoryPermission;
+    this.categoryRole = categoryRole;
   }
 
   public String getValue() {
     return value;
   }
 
-  public CategoryPermission getCategoryPermission() {
-    return categoryPermission;
+  public CategoryRole getCategoryRole() {
+    return categoryRole;
   }
 
   public ResourceRole getResourceRole() {
@@ -86,10 +86,10 @@ public enum RelationLabel {
     };
   }
 
-  public static RelationLabel forCategoryPermission(CategoryPermission permission) {
-    if (permission != null) {
+  public static RelationLabel forCategoryRole(CategoryRole role) {
+    if (role != null) {
       for (RelationLabel t : values()) {
-        if (permission.equals(t.getCategoryPermission())) {
+        if (role == t.getCategoryRole()) {
           return t;
         }
       }

@@ -1,16 +1,18 @@
 package org.metadatacenter.server.security.model.permission.category;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 public class CategoryPermissionGroupPermissionPair {
 
   private CategoryPermissionGroup group;
-  private CategoryPermission permission;
+  private CategoryRole role;
 
   public CategoryPermissionGroupPermissionPair() {
   }
 
-  public CategoryPermissionGroupPermissionPair(CategoryPermissionGroup group, CategoryPermission permission) {
+  public CategoryPermissionGroupPermissionPair(CategoryPermissionGroup group, CategoryRole role) {
     this.group = group;
-    this.permission = permission;
+    this.role = role;
   }
 
   public CategoryPermissionGroup getGroup() {
@@ -21,12 +23,13 @@ public class CategoryPermissionGroupPermissionPair {
     this.group = group;
   }
 
-  public CategoryPermission getPermission() {
-    return permission;
+  public CategoryRole getRole() {
+    return role;
   }
 
-  public void setPermission(CategoryPermission permission) {
-    this.permission = permission;
+  @JsonAlias("permission")
+  public void setRole(CategoryRole role) {
+    this.role = role;
   }
 
   @Override
@@ -43,14 +46,14 @@ public class CategoryPermissionGroupPermissionPair {
     if (getGroup() != null ? !getGroup().equals(that.getGroup()) : that.getGroup() != null) {
       return false;
     }
-    return getPermission() == that.getPermission();
+    return getRole() == that.getRole();
 
   }
 
   @Override
   public int hashCode() {
     int result = getGroup() != null ? getGroup().hashCode() : 0;
-    result = 31 * result + (getPermission() != null ? getPermission().hashCode() : 0);
+    result = 31 * result + (getRole() != null ? getRole().hashCode() : 0);
     return result;
   }
 }
