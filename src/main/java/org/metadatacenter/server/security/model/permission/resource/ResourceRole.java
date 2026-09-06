@@ -53,19 +53,15 @@ public enum ResourceRole {
     return first.precedence >= second.precedence ? first : second;
   }
 
-  /**
-   * Accept the role vocabulary and, during the transition, the two legacy API values.
-   * Legacy {@code write} means Manager because that is the authority it currently confers.
-   */
   @JsonCreator
   public static ResourceRole forValue(String value) {
     if (value == null) {
       return null;
     }
     return switch (value.toLowerCase(Locale.ROOT)) {
-      case "viewer", "read" -> VIEWER;
+      case "viewer" -> VIEWER;
       case "editor" -> EDITOR;
-      case "manager", "write" -> MANAGER;
+      case "manager" -> MANAGER;
       default -> null;
     };
   }

@@ -12,7 +12,12 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true, value = {
+    "currentUserRole", "canRead", "canView", "canEdit", "canCreate", "canWrite", "canDelete",
+    "canShare", "canManageGrants", "canMove", "canManageOpenView", "canTransferOwnership",
+    "canChangeOwner", "canCreateDraft", "canPublish", "canSubmit", "canPopulate", "canCopy",
+    "canMakeOpen", "canMakeNotOpen"
+})
 public class CurrentUserResourcePermissions {
   private ResourceRole role;
   private Set<ResourceCapability> capabilities = Collections.emptySet();

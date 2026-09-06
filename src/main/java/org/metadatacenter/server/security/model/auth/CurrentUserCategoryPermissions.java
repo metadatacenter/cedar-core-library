@@ -1,5 +1,6 @@
 package org.metadatacenter.server.security.model.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.metadatacenter.error.CedarErrorKey;
 import org.metadatacenter.server.security.model.permission.category.CategoryCapability;
 import org.metadatacenter.server.security.model.permission.category.CategoryAuthority;
@@ -9,6 +10,11 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
+@JsonIgnoreProperties(value = {
+    "currentUserRole", "canRead", "canWrite", "canDelete", "canShare", "canChangeOwner",
+    "canAttach", "canDetach", "canEdit", "canCreateChild", "canManageGrants", "canMove",
+    "canTransferOwnership"
+})
 public class CurrentUserCategoryPermissions {
   private CategoryRole role;
   private boolean owner;

@@ -2,6 +2,7 @@ package org.metadatacenter.server.security.model.permission;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -12,7 +13,6 @@ import org.metadatacenter.server.security.model.user.CedarGroupExtract;
 import org.metadatacenter.server.security.model.user.CedarUser;
 import org.metadatacenter.server.security.model.user.CedarUserExtract;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -33,9 +33,9 @@ class CategoryPermissionModelTest {
   }
 
   @Test
-  void legacyPermissionValuesMapToRoles() {
-    assertSame(CategoryRole.CLASSIFIER, CategoryRole.forValue("attach"));
-    assertSame(CategoryRole.MANAGER, CategoryRole.forValue("write"));
+  void unknownRoleValuesReturnNull() {
+    assertNull(CategoryRole.forValue("attach"));
+    assertNull(CategoryRole.forValue("write"));
     assertNull(CategoryRole.forValue("admin"));
     assertNull(CategoryRole.forValue(null));
   }
@@ -83,20 +83,15 @@ class CategoryPermissionModelTest {
   }
 
   @Test
-  void legacyPermissionPropertiesAreAcceptedButRolesAreEmitted() throws Exception {
+  void legacyPermissionPropertyIsRejected() {
     String json = "{\"owner\":{\"@id\":\"" + OWNER_ID + "\"},"
         + "\"userPermissions\":[{\"user\":{\"@id\":\"" + USER_ID
         + "\"},\"permission\":\"write\"}],"
         + "\"groupPermissions\":[{\"group\":{\"@id\":\"" + GROUP_ID
         + "\"},\"permission\":\"attach\"}]}";
 
-    CategoryPermissionRequest request = mapper.readValue(json, CategoryPermissionRequest.class);
-
-    assertSame(CategoryRole.MANAGER, request.getUserPermissions().get(0).getRole());
-    assertSame(CategoryRole.CLASSIFIER, request.getGroupPermissions().get(0).getRole());
-    String serialized = mapper.writeValueAsString(request);
-    assertTrue(serialized.contains("\"role\":\"manager\""));
-    assertFalse(serialized.contains("\"permission\""));
+    assertThrows(UnrecognizedPropertyException.class,
+        () -> mapper.readValue(json, CategoryPermissionRequest.class));
   }
 
   @Test
@@ -154,7 +149,7 @@ class CategoryPermissionModelTest {
   }
 
   @Test
-  void currentUserJsonExposesRoleOwnershipCapabilitiesAndCompatibilityBooleans() throws Exception {
+  void currentUserJsonExposesOnlyRoleOwnershipAndCapabilities() throws Exception {
     CurrentUserCategoryPermissions permissions = new CurrentUserCategoryPermissions();
     CategoryAuthority authority = new CategoryAuthority(CategoryRole.EDITOR, false);
     permissions.applyAccess(authority, CategoryCapabilityPolicy.evaluate(
@@ -163,23 +158,15 @@ class CategoryPermissionModelTest {
     JsonNode json = mapper.readTree(mapper.writeValueAsString(permissions));
 
     assertEquals("editor", json.get("role").asText());
-    assertEquals("editor", json.get("currentUserRole").asText());
     assertFalse(json.get("owner").asBoolean());
-    assertTrue(json.get("canEdit").asBoolean());
-    assertTrue(json.get("canAttach").asBoolean());
-    assertFalse(json.get("canShare").asBoolean());
-    assertFalse(json.get("canWrite").asBoolean(), "Editor is not legacy WRITE");
-  }
-
-  @Test
-  void managerAndOwnerRemainWritableToLegacyClients() {
-    for (CategoryAuthority authority : List.of(
-        new CategoryAuthority(CategoryRole.MANAGER, false),
-        new CategoryAuthority(null, true))) {
-      CurrentUserCategoryPermissions permissions = new CurrentUserCategoryPermissions();
-      permissions.applyAuthority(authority);
-      assertTrue(permissions.isCanWrite());
-    }
+    assertEquals(Set.of("readCategory", "attachCategory", "detachCategory", "updateCategory",
+            "createChildCategory", "deleteCategory"),
+        mapper.convertValue(json.get("capabilities"), Set.class));
+    assertFalse(json.has("currentUserRole"));
+    assertFalse(json.has("canEdit"));
+    assertFalse(json.has("canAttach"));
+    assertFalse(json.has("canShare"));
+    assertFalse(json.has("canWrite"));
   }
 
   private static CedarUser userWithPermissions(CedarPermission... permissions) {

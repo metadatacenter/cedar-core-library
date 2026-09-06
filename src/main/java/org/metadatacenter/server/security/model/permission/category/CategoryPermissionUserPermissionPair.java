@@ -1,7 +1,5 @@
 package org.metadatacenter.server.security.model.permission.category;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-
 public class CategoryPermissionUserPermissionPair {
 
   private CategoryPermissionUser user;
@@ -27,7 +25,6 @@ public class CategoryPermissionUserPermissionPair {
     return role;
   }
 
-  @JsonAlias("permission")
   public void setRole(CategoryRole role) {
     this.role = role;
   }

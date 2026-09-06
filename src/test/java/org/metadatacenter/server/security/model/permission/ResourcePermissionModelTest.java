@@ -2,6 +2,7 @@ package org.metadatacenter.server.security.model.permission;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -55,6 +56,8 @@ class ResourcePermissionModelTest {
   @Test
   void unknownRoleValueReturnsNull() {
     assertNull(ResourceRole.forValue("admin"));
+    assertNull(ResourceRole.forValue("read"));
+    assertNull(ResourceRole.forValue("write"));
   }
 
   @Test
@@ -158,17 +161,13 @@ class ResourcePermissionModelTest {
   }
 
   @Test
-  void legacyPermissionValuesAreAcceptedButRolesAreEmitted() throws Exception {
+  void legacyPermissionPropertyIsRejected() {
     String json = "{\"owner\":{\"@id\":\"" + OWNER_ID + "\"},"
         + "\"userPermissions\":[{\"user\":{\"@id\":\"" + USER_ID
         + "\"},\"permission\":\"write\"}],\"groupPermissions\":[]}";
 
-    ResourcePermissionsRequest request = mapper.readValue(json, ResourcePermissionsRequest.class);
-
-    assertSame(ResourceRole.MANAGER, request.getUserPermissions().get(0).getRole());
-    String serialized = mapper.writeValueAsString(request);
-    assertTrue(serialized.contains("\"role\":\"manager\""));
-    assertFalse(serialized.contains("\"permission\""));
+    assertThrows(UnrecognizedPropertyException.class,
+        () -> mapper.readValue(json, ResourcePermissionsRequest.class));
   }
 
   @Test
@@ -346,27 +345,16 @@ class ResourcePermissionModelTest {
     JsonNode json = mapper.readTree(mapper.writeValueAsString(permissions));
 
     assertEquals("editor", json.get("role").asText());
-    assertEquals("editor", json.get("currentUserRole").asText());
     assertFalse(json.get("owner").asBoolean());
     assertEquals(Set.of("readResource", "updateResource", "deleteResource"),
         mapper.convertValue(json.get("capabilities"), Set.class));
     assertEquals(Set.of("copyFromResource", "populate"),
         mapper.convertValue(json.get("availableActions"), Set.class));
-    assertTrue(json.get("canEdit").asBoolean());
-    assertFalse(json.get("canCreate").asBoolean());
-    assertFalse(json.get("canWrite").asBoolean(), "Editor is not legacy WRITE");
-    assertTrue(json.get("canCopy").asBoolean());
-  }
-
-  @Test
-  void managerAndOwnerContinueToAppearWritableToLegacyClients() {
-    for (ResourceAuthority authority : List.of(
-        new ResourceAuthority(ResourceRole.MANAGER, false),
-        new ResourceAuthority(null, true))) {
-      CurrentUserResourcePermissions permissions = new CurrentUserResourcePermissions();
-      permissions.applyAuthority(authority, CedarResourceType.TEMPLATE);
-      assertTrue(permissions.isCanWrite());
-    }
+    assertFalse(json.has("currentUserRole"));
+    assertFalse(json.has("canEdit"));
+    assertFalse(json.has("canCreate"));
+    assertFalse(json.has("canWrite"));
+    assertFalse(json.has("canCopy"));
   }
 
   @Test
@@ -378,7 +366,7 @@ class ResourcePermissionModelTest {
 
     assertTrue(json.get("owner").asBoolean());
     assertTrue(json.get("role").isNull());
-    assertTrue(json.get("currentUserRole").isNull());
+    assertFalse(json.has("currentUserRole"));
     assertTrue(json.get("capabilities").toString().contains("transferOwnership"));
   }
 

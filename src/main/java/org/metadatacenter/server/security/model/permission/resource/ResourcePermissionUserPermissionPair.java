@@ -1,7 +1,5 @@
 package org.metadatacenter.server.security.model.permission.resource;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-
 public class ResourcePermissionUserPermissionPair {
 
   private ResourcePermissionUser user;
@@ -27,7 +25,6 @@ public class ResourcePermissionUserPermissionPair {
     return role;
   }
 
-  @JsonAlias("permission")
   public void setRole(ResourceRole role) {
     this.role = role;
   }

@@ -53,7 +53,6 @@ public enum CategoryRole {
     return first.precedence >= second.precedence ? first : second;
   }
 
-  /** Accept role values and the two legacy category-permission values during the transition. */
   @JsonCreator
   public static CategoryRole forValue(String value) {
     if (value == null) {
@@ -61,9 +60,9 @@ public enum CategoryRole {
     }
     return switch (value.toLowerCase(Locale.ROOT)) {
       case "viewer" -> VIEWER;
-      case "classifier", "attach" -> CLASSIFIER;
+      case "classifier" -> CLASSIFIER;
       case "editor" -> EDITOR;
-      case "manager", "write" -> MANAGER;
+      case "manager" -> MANAGER;
       default -> null;
     };
   }
