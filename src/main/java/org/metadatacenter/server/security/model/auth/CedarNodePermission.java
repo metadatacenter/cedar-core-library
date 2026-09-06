@@ -1,10 +1,10 @@
 package org.metadatacenter.server.security.model.auth;
 
-import org.metadatacenter.server.security.model.permission.resource.FilesystemResourcePermission;
+import org.metadatacenter.server.security.model.permission.resource.ResourceRole;
 
 public abstract class CedarNodePermission {
 
-  protected FilesystemResourcePermission permission;
+  protected ResourceRole role;
   protected static final String KEY_SEPARATOR = "|";
 
   public CedarNodePermission() {
@@ -12,20 +12,20 @@ public abstract class CedarNodePermission {
 
   protected abstract String getObjectId();
 
-  public FilesystemResourcePermission getPermission() {
-    return permission;
+  public ResourceRole getRole() {
+    return role;
   }
 
-  public void setPermission(FilesystemResourcePermission permission) {
-    this.permission = permission;
+  public void setRole(ResourceRole role) {
+    this.role = role;
   }
 
   public String getKey() {
-    return getKey(getObjectId(), permission);
+    return getKey(getObjectId(), role);
   }
 
-  public static String getKey(String objectId, FilesystemResourcePermission permission) {
-    return objectId + KEY_SEPARATOR + permission.getValue();
+  public static String getKey(String objectId, ResourceRole role) {
+    return objectId + KEY_SEPARATOR + role.getValue();
   }
 
   public static String getId(String key) {

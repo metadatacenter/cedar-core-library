@@ -3,6 +3,7 @@ package org.metadatacenter.server.security.model.auth;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.metadatacenter.server.security.model.permission.resource.ResourcePermissionGroupPermissionPair;
+import org.metadatacenter.server.security.model.permission.resource.ResourceRole;
 
 import java.util.Objects;
 
@@ -14,7 +15,8 @@ public enum NodeSharePermission {
 
   public static NodeSharePermission fromGroupPermission(ResourcePermissionGroupPermissionPair groupPermission) {
     if (groupPermission != null) {
-      return forValue(groupPermission.getPermission().getValue());
+      ResourceRole role = groupPermission.getRole();
+      return role == ResourceRole.MANAGER ? WRITE : role == ResourceRole.VIEWER ? READ : NONE;
     } else {
       return NONE;
     }

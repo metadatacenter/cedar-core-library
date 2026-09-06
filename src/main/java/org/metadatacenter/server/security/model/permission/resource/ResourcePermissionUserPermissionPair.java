@@ -1,16 +1,18 @@
 package org.metadatacenter.server.security.model.permission.resource;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 public class ResourcePermissionUserPermissionPair {
 
   private ResourcePermissionUser user;
-  private FilesystemResourcePermission permission;
+  private ResourceRole role;
 
   public ResourcePermissionUserPermissionPair() {
   }
 
-  public ResourcePermissionUserPermissionPair(ResourcePermissionUser user, FilesystemResourcePermission permission) {
+  public ResourcePermissionUserPermissionPair(ResourcePermissionUser user, ResourceRole role) {
     this.user = user;
-    this.permission = permission;
+    this.role = role;
   }
 
   public ResourcePermissionUser getUser() {
@@ -21,12 +23,13 @@ public class ResourcePermissionUserPermissionPair {
     this.user = user;
   }
 
-  public FilesystemResourcePermission getPermission() {
-    return permission;
+  public ResourceRole getRole() {
+    return role;
   }
 
-  public void setPermission(FilesystemResourcePermission permission) {
-    this.permission = permission;
+  @JsonAlias("permission")
+  public void setRole(ResourceRole role) {
+    this.role = role;
   }
 
   @Override
@@ -43,14 +46,14 @@ public class ResourcePermissionUserPermissionPair {
     if (getUser() != null ? !getUser().equals(that.getUser()) : that.getUser() != null) {
       return false;
     }
-    return getPermission() == that.getPermission();
+    return getRole() == that.getRole();
 
   }
 
   @Override
   public int hashCode() {
     int result = getUser() != null ? getUser().hashCode() : 0;
-    result = 31 * result + (getPermission() != null ? getPermission().hashCode() : 0);
+    result = 31 * result + (getRole() != null ? getRole().hashCode() : 0);
     return result;
   }
 }

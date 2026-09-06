@@ -1,7 +1,7 @@
 package org.metadatacenter.server.security.model.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.metadatacenter.server.security.model.permission.resource.FilesystemResourcePermission;
+import org.metadatacenter.server.security.model.permission.resource.ResourceRole;
 import org.metadatacenter.server.security.model.permission.resource.ResourcePermissionGroup;
 import org.metadatacenter.server.security.model.permission.resource.ResourcePermissionGroupPermissionPair;
 import org.metadatacenter.server.security.model.user.CedarGroupExtract;
@@ -14,9 +14,9 @@ public class CedarNodeGroupPermission extends CedarNodePermission {
   public CedarNodeGroupPermission() {
   }
 
-  public CedarNodeGroupPermission(CedarGroupExtract group, FilesystemResourcePermission permission) {
+  public CedarNodeGroupPermission(CedarGroupExtract group, ResourceRole role) {
     this.group = group;
-    this.permission = permission;
+    this.role = role;
   }
 
   public CedarGroupExtract getGroup() {
@@ -33,6 +33,6 @@ public class CedarNodeGroupPermission extends CedarNodePermission {
   }
 
   public ResourcePermissionGroupPermissionPair getAsGroupIdPermissionPair() {
-    return new ResourcePermissionGroupPermissionPair(new ResourcePermissionGroup(getGroup().getId()), getPermission());
+    return new ResourcePermissionGroupPermissionPair(new ResourcePermissionGroup(getGroup().getId()), getRole());
   }
 }
