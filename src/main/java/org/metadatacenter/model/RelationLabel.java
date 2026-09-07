@@ -1,26 +1,25 @@
 package org.metadatacenter.model;
 
-import org.metadatacenter.server.security.model.permission.category.CategoryPermission;
-import org.metadatacenter.server.security.model.permission.resource.FilesystemResourcePermission;
+import org.metadatacenter.server.security.model.permission.category.CategoryRole;
+import org.metadatacenter.server.security.model.permission.resource.ResourceRole;
 
 public enum RelationLabel {
 
   OWNS(PlainLabels.OWNS, null, null),
   CONTAINS(PlainLabels.CONTAINS, null, null),
   MEMBEROF(PlainLabels.MEMBEROF, null, null),
-  CANREAD(PlainLabels.CANREAD, FilesystemResourcePermission.READ, null),
-  CANWRITE(PlainLabels.CANWRITE, FilesystemResourcePermission.WRITE, null),
-  CANCHANGEOWNER(PlainLabels.CANCHANGEOWNER, FilesystemResourcePermission.CHANGEOWNER, null),
-  CANCHANGEPERMISSIONS(PlainLabels.CANCHANGEPERMISSIONS, FilesystemResourcePermission.CHANGEPERMISSIONS, null),
-  CANPUBLISH(PlainLabels.CANPUBLISH, FilesystemResourcePermission.PUBLISH, null),
-  CANCREATEDRAFT(PlainLabels.CANCREATEDRAFT, FilesystemResourcePermission.CREATE_DRAFT, null),
+  CANREAD(PlainLabels.CANREAD, ResourceRole.VIEWER, null),
+  CANWRITE(PlainLabels.CANWRITE, ResourceRole.MANAGER, null),
+  EDITOR_ROLE(PlainLabels.EDITOR_ROLE, ResourceRole.EDITOR, CategoryRole.EDITOR),
+  VIEWER_ROLE(PlainLabels.VIEWER_ROLE, ResourceRole.VIEWER, CategoryRole.VIEWER),
+  MANAGER_ROLE(PlainLabels.MANAGER_ROLE, ResourceRole.MANAGER, null),
   ADMINISTERS(PlainLabels.ADMINISTERS, null, null),
   PREVIOUSVERSION(PlainLabels.PREVIOUSVERSION, null, null),
   DERIVEDFROM(PlainLabels.DERIVEDFROM, null, null),
   //
   CONTAINSCATEGORY(PlainLabels.CONTAINSCATEGORY, null, null),
-  CANATTACHCATEGORY(PlainLabels.CANATTACHCATEGORY, null, CategoryPermission.ATTACH),
-  CANWRITECATEGORY(PlainLabels.CANWRITECATEGORY, null, CategoryPermission.WRITE),
+  CANATTACHCATEGORY(PlainLabels.CANATTACHCATEGORY, null, CategoryRole.CLASSIFIER),
+  CANWRITECATEGORY(PlainLabels.CANWRITECATEGORY, null, CategoryRole.MANAGER),
   OWNSCATEGORY(PlainLabels.OWNSCATEGORY, null, null),
   CONTAINSARTIFACT(PlainLabels.CONTAINSARTIFACT, null, null),
   INCLUDES(PlainLabels.INCLUDES, null, null);
@@ -31,10 +30,9 @@ public enum RelationLabel {
     public static final String MEMBEROF = "MEMBEROF";
     public static final String CANREAD = "CANREAD";
     public static final String CANWRITE = "CANWRITE";
-    public static final String CANCHANGEOWNER = "CANCHANGEOWNER";
-    public static final String CANCHANGEPERMISSIONS = "CANCHANGEPERMISSIONS";
-    public static final String CANPUBLISH = "CANPUBLISH";
-    public static final String CANCREATEDRAFT = "CANCREATEDRAFT";
+    public static final String EDITOR_ROLE = "EDITOR_ROLE";
+    public static final String VIEWER_ROLE = "VIEWER_ROLE";
+    public static final String MANAGER_ROLE = "MANAGER_ROLE";
     public static final String ADMINISTERS = "ADMINISTERS";
     public static final String PREVIOUSVERSION = "PREVIOUSVERSION";
     public static final String DERIVEDFROM = "DERIVEDFROM";
@@ -48,25 +46,26 @@ public enum RelationLabel {
   }
 
   private final String value;
-  private final FilesystemResourcePermission filesystemResourcePermission;
-  private final CategoryPermission categoryPermission;
+  private final ResourceRole resourceRole;
+  private final CategoryRole categoryRole;
 
-  RelationLabel(String value, FilesystemResourcePermission filesystemResourcePermission, CategoryPermission categoryPermission) {
+  RelationLabel(String value, ResourceRole resourceRole,
+                CategoryRole categoryRole) {
     this.value = value;
-    this.filesystemResourcePermission = filesystemResourcePermission;
-    this.categoryPermission = categoryPermission;
+    this.resourceRole = resourceRole;
+    this.categoryRole = categoryRole;
   }
 
   public String getValue() {
     return value;
   }
 
-  public FilesystemResourcePermission getFilesystemResourcePermission() {
-    return filesystemResourcePermission;
+  public CategoryRole getCategoryRole() {
+    return categoryRole;
   }
 
-  public CategoryPermission getCategoryPermission() {
-    return categoryPermission;
+  public ResourceRole getResourceRole() {
+    return resourceRole;
   }
 
   public static RelationLabel forValue(String type) {
@@ -78,21 +77,19 @@ public enum RelationLabel {
     return null;
   }
 
-  public static RelationLabel forFilesystemResourcePermission(FilesystemResourcePermission permission) {
-    if (permission != null) {
-      for (RelationLabel t : values()) {
-        if (permission.equals(t.getFilesystemResourcePermission())) {
-          return t;
-        }
-      }
-    }
-    return null;
+  /** Return the relationship written before the later legacy-name migration. */
+  public static RelationLabel forResourceRole(ResourceRole role) {
+    return switch (role) {
+      case VIEWER -> CANREAD;
+      case EDITOR -> EDITOR_ROLE;
+      case MANAGER -> CANWRITE;
+    };
   }
 
-  public static RelationLabel forCategoryPermission(CategoryPermission permission) {
-    if (permission != null) {
+  public static RelationLabel forCategoryRole(CategoryRole role) {
+    if (role != null) {
       for (RelationLabel t : values()) {
-        if (permission.equals(t.getCategoryPermission())) {
+        if (role == t.getCategoryRole()) {
           return t;
         }
       }

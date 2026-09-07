@@ -3,14 +3,14 @@ package org.metadatacenter.server.security.model.permission.category;
 public class CategoryPermissionUserPermissionPair {
 
   private CategoryPermissionUser user;
-  private CategoryPermission permission;
+  private CategoryRole role;
 
   public CategoryPermissionUserPermissionPair() {
   }
 
-  public CategoryPermissionUserPermissionPair(CategoryPermissionUser user, CategoryPermission permission) {
+  public CategoryPermissionUserPermissionPair(CategoryPermissionUser user, CategoryRole role) {
     this.user = user;
-    this.permission = permission;
+    this.role = role;
   }
 
   public CategoryPermissionUser getUser() {
@@ -21,12 +21,12 @@ public class CategoryPermissionUserPermissionPair {
     this.user = user;
   }
 
-  public CategoryPermission getPermission() {
-    return permission;
+  public CategoryRole getRole() {
+    return role;
   }
 
-  public void setPermission(CategoryPermission permission) {
-    this.permission = permission;
+  public void setRole(CategoryRole role) {
+    this.role = role;
   }
 
   @Override
@@ -43,14 +43,14 @@ public class CategoryPermissionUserPermissionPair {
     if (getUser() != null ? !getUser().equals(that.getUser()) : that.getUser() != null) {
       return false;
     }
-    return getPermission() == that.getPermission();
+    return getRole() == that.getRole();
 
   }
 
   @Override
   public int hashCode() {
     int result = getUser() != null ? getUser().hashCode() : 0;
-    result = 31 * result + (getPermission() != null ? getPermission().hashCode() : 0);
+    result = 31 * result + (getRole() != null ? getRole().hashCode() : 0);
     return result;
   }
 }

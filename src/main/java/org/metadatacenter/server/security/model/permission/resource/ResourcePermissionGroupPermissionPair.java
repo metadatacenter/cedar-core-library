@@ -3,14 +3,14 @@ package org.metadatacenter.server.security.model.permission.resource;
 public class ResourcePermissionGroupPermissionPair {
 
   private ResourcePermissionGroup group;
-  private FilesystemResourcePermission permission;
+  private ResourceRole role;
 
   public ResourcePermissionGroupPermissionPair() {
   }
 
-  public ResourcePermissionGroupPermissionPair(ResourcePermissionGroup group, FilesystemResourcePermission permission) {
+  public ResourcePermissionGroupPermissionPair(ResourcePermissionGroup group, ResourceRole role) {
     this.group = group;
-    this.permission = permission;
+    this.role = role;
   }
 
   public ResourcePermissionGroup getGroup() {
@@ -21,12 +21,12 @@ public class ResourcePermissionGroupPermissionPair {
     this.group = group;
   }
 
-  public FilesystemResourcePermission getPermission() {
-    return permission;
+  public ResourceRole getRole() {
+    return role;
   }
 
-  public void setPermission(FilesystemResourcePermission permission) {
-    this.permission = permission;
+  public void setRole(ResourceRole role) {
+    this.role = role;
   }
 
   @Override
@@ -43,14 +43,14 @@ public class ResourcePermissionGroupPermissionPair {
     if (getGroup() != null ? !getGroup().equals(that.getGroup()) : that.getGroup() != null) {
       return false;
     }
-    return getPermission() == that.getPermission();
+    return getRole() == that.getRole();
 
   }
 
   @Override
   public int hashCode() {
     int result = getGroup() != null ? getGroup().hashCode() : 0;
-    result = 31 * result + (getPermission() != null ? getPermission().hashCode() : 0);
+    result = 31 * result + (getRole() != null ? getRole().hashCode() : 0);
     return result;
   }
 }

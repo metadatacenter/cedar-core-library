@@ -2,7 +2,7 @@ package org.metadatacenter.server.security.model.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.metadatacenter.id.CedarFilesystemResourceId;
-import org.metadatacenter.server.security.model.permission.resource.FilesystemResourcePermission;
+import org.metadatacenter.server.security.model.permission.resource.ResourceRole;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +10,8 @@ import java.util.Map;
 public class CedarNodeMaterializedPermissions {
 
   private final String id;
-  private final Map<String, FilesystemResourcePermission> userPermissions;
-  private final Map<String, FilesystemResourcePermission> groupPermissions;
+  private final Map<String, ResourceRole> userRoles;
+  private final Map<String, ResourceRole> groupRoles;
   private final NodeSharePermission everybodyPermission;
 
 
@@ -19,8 +19,8 @@ public class CedarNodeMaterializedPermissions {
                                           NodeSharePermission everybodyPermission) {
     this.id = resourceId.getId();
     this.everybodyPermission = everybodyPermission;
-    userPermissions = new HashMap<>();
-    groupPermissions = new HashMap<>();
+    userRoles = new HashMap<>();
+    groupRoles = new HashMap<>();
   }
 
   @JsonProperty("@id")
@@ -32,27 +32,27 @@ public class CedarNodeMaterializedPermissions {
     return everybodyPermission;
   }
 
-  public Map<String, FilesystemResourcePermission> getUserPermissions() {
-    return userPermissions;
+  public Map<String, ResourceRole> getUserRoles() {
+    return userRoles;
   }
 
-  public void setUserPermission(String id, FilesystemResourcePermission userPermission) {
-    userPermissions.put(id, userPermission);
+  public void setUserRole(String id, ResourceRole userRole) {
+    userRoles.put(id, userRole);
   }
 
-  public Map<String, FilesystemResourcePermission> getGroupPermissions() {
-    return groupPermissions;
+  public Map<String, ResourceRole> getGroupRoles() {
+    return groupRoles;
   }
 
-  public void setGroupPermission(String id, FilesystemResourcePermission groupPermission) {
-    groupPermissions.put(id, groupPermission);
+  public void setGroupRole(String id, ResourceRole groupRole) {
+    groupRoles.put(id, groupRole);
   }
 
-  public static String getKey(String userOrGroupId, FilesystemResourcePermission permission) {
+  public static String getKey(String userOrGroupId, ResourceRole role) {
     StringBuilder sb = new StringBuilder();
     sb.append(userOrGroupId);
     sb.append("|");
-    sb.append(permission.getValue());
+    sb.append(role.getValue());
     return sb.toString();
   }
 }

@@ -11,9 +11,9 @@ public class CategoryUserPermission extends AbstractCategoryPermission {
   public CategoryUserPermission() {
   }
 
-  public CategoryUserPermission(CedarUserExtract user, CategoryPermission permission) {
+  public CategoryUserPermission(CedarUserExtract user, CategoryRole role) {
     this.user = user;
-    this.permission = permission;
+    this.role = role;
   }
 
   public CedarUserExtract getUser() {
@@ -30,6 +30,6 @@ public class CategoryUserPermission extends AbstractCategoryPermission {
   }
 
   public CategoryPermissionUserPermissionPair getAsUserIdPermissionPair() {
-    return new CategoryPermissionUserPermissionPair(new CategoryPermissionUser(getUser().getId()), getPermission());
+    return new CategoryPermissionUserPermissionPair(new CategoryPermissionUser(getUser().getId()), getRole());
   }
 }

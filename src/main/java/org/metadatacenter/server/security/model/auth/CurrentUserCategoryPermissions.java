@@ -1,73 +1,119 @@
 package org.metadatacenter.server.security.model.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.metadatacenter.error.CedarErrorKey;
+import org.metadatacenter.server.security.model.permission.category.CategoryCapability;
+import org.metadatacenter.server.security.model.permission.category.CategoryAuthority;
+import org.metadatacenter.server.security.model.permission.category.CategoryRole;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+
+@JsonIgnoreProperties(value = {
+    "currentUserRole", "canRead", "canWrite", "canDelete", "canShare", "canChangeOwner",
+    "canAttach", "canDetach", "canEdit", "canCreateChild", "canManageGrants", "canMove",
+    "canTransferOwnership"
+})
 public class CurrentUserCategoryPermissions {
-  private boolean canRead;
-  private boolean canWrite;
-  private boolean canDelete;
-  private boolean canShare;
-  private boolean canChangeOwner;
-  private boolean canAttach;
-  private boolean canDetach;
+  private CategoryRole role;
+  private boolean owner;
+  private Set<CategoryCapability> capabilities = Collections.emptySet();
 
   private CedarErrorKey createDraftErrorKey;
   private CedarErrorKey publishErrorKey;
 
-  public boolean isCanRead() {
-    return canRead;
+  public CategoryRole getRole() {
+    return role;
   }
 
-  public void setCanRead(boolean canRead) {
-    this.canRead = canRead;
+  public void setRole(CategoryRole role) {
+    this.role = role;
+  }
+
+  public boolean isOwner() {
+    return owner;
+  }
+
+  public void setOwner(boolean owner) {
+    this.owner = owner;
+  }
+
+  public Set<CategoryCapability> getCapabilities() {
+    return capabilities;
+  }
+
+  public void setCapabilities(Set<CategoryCapability> capabilities) {
+    this.capabilities = capabilities == null || capabilities.isEmpty()
+        ? Collections.emptySet()
+        : Collections.unmodifiableSet(EnumSet.copyOf(capabilities));
+  }
+
+  public void applyAuthority(CategoryAuthority authority) {
+    applyAccess(authority, authority.capabilities());
+  }
+
+  public void applyAccess(CategoryAuthority authority, Set<CategoryCapability> effectiveCapabilities) {
+    setOwner(authority.owner());
+    setRole(authority.role());
+    setCapabilities(effectiveCapabilities);
+  }
+
+  public CategoryRole getCurrentUserRole() {
+    return role;
+  }
+
+  public void setCurrentUserRole(CategoryRole currentUserRole) {
+    setRole(currentUserRole);
+  }
+
+  public boolean isCanRead() {
+    return capabilities.contains(CategoryCapability.READ_CATEGORY);
   }
 
   public boolean isCanWrite() {
-    return canWrite;
-  }
-
-  public void setCanWrite(boolean canWrite) {
-    this.canWrite = canWrite;
+    return capabilities.contains(CategoryCapability.UPDATE_CATEGORY)
+        && capabilities.contains(CategoryCapability.MANAGE_GRANTS);
   }
 
   public boolean isCanDelete() {
-    return canDelete;
-  }
-
-  public void setCanDelete(boolean canDelete) {
-    this.canDelete = canDelete;
+    return capabilities.contains(CategoryCapability.DELETE_CATEGORY);
   }
 
   public boolean isCanShare() {
-    return canShare;
-  }
-
-  public void setCanShare(boolean canShare) {
-    this.canShare = canShare;
+    return capabilities.contains(CategoryCapability.MANAGE_GRANTS);
   }
 
   public boolean isCanChangeOwner() {
-    return canChangeOwner;
-  }
-
-  public void setCanChangeOwner(boolean canChangeOwner) {
-    this.canChangeOwner = canChangeOwner;
+    return capabilities.contains(CategoryCapability.TRANSFER_OWNERSHIP);
   }
 
   public boolean isCanAttach() {
-    return canAttach;
-  }
-
-  public void setCanAttach(boolean canAttach) {
-    this.canAttach = canAttach;
+    return capabilities.contains(CategoryCapability.ATTACH_CATEGORY);
   }
 
   public boolean isCanDetach() {
-    return canDetach;
+    return capabilities.contains(CategoryCapability.DETACH_CATEGORY);
   }
 
-  public void setCanDetach(boolean canDetach) {
-    this.canDetach = canDetach;
+  public boolean isCanEdit() {
+    return capabilities.contains(CategoryCapability.UPDATE_CATEGORY);
+  }
+
+  public boolean isCanCreateChild() {
+    return capabilities.contains(CategoryCapability.CREATE_CHILD_CATEGORY);
+  }
+
+  public boolean isCanManageGrants() {
+    return capabilities.contains(CategoryCapability.MANAGE_GRANTS);
+  }
+
+  public boolean isCanMove() {
+    return capabilities.contains(CategoryCapability.MOVE_CATEGORY);
+  }
+
+  public boolean isCanTransferOwnership() {
+    return capabilities.contains(CategoryCapability.TRANSFER_OWNERSHIP);
   }
 
   public CedarErrorKey getCreateDraftErrorKey() {
