@@ -2,6 +2,7 @@ package org.metadatacenter.server.security.model.permission.resource;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.metadatacenter.model.CedarResourceType;
 
 import java.util.EnumSet;
@@ -10,7 +11,15 @@ import java.util.Set;
 
 import static org.metadatacenter.server.security.model.permission.resource.ResourceCapability.*;
 
-/** A role granted to a user or group on an artifact or folder. */
+/**
+ * A role granted to a user or a group on an artifact or a folder.
+ *
+ * <p>Jackson writes the lowercase {@code value} rather than the constant name, so the OpenAPI
+ * enum is derived from {@link #getValue()} in every document that publishes this type.</p>
+ */
+@Schema(name = "ResourceRole", enumAsRef = true,
+    description = "A role granted to a user or a group on an artifact or a folder. Each role "
+        + "includes everything the weaker roles allow.")
 public enum ResourceRole {
   VIEWER("viewer", 1, EnumSet.of(READ_RESOURCE, LIST_FOLDER_CONTENTS)),
   EDITOR("editor", 2, EnumSet.of(

@@ -48,6 +48,16 @@
       <artifactId>jackson-datatype-jsr310</artifactId>
     </dependency>
 
+    <!-- Carries the OpenAPI annotations on the permissions payload, so the one description of it
+         sits on the types Jackson serializes instead of being hand-written by each service that
+         publishes it. The resource server and the monitor server both publish that payload, and
+         their two hand-written descriptions had already drifted apart. Documentation only: no
+         runtime code reads them. -->
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations-jakarta</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>

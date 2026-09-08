@@ -1,7 +1,12 @@
 package org.metadatacenter.server.security.model.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(name = "CedarGroupReference",
+    description = "A group as CEDAR names one beside something else: the holder of a grant, or a "
+        + "group a user belongs to. The identifier is the reference; the name is carried so a "
+        + "caller need not resolve it to display the group.")
 public class CedarGroupExtract {
 
   private String id;
@@ -23,6 +28,8 @@ public class CedarGroupExtract {
   }
 
   @JsonProperty("@id")
+  @Schema(name = "@id", requiredMode = Schema.RequiredMode.REQUIRED, format = "uri",
+      description = "Identifier of the group.")
   public String getId() {
     return id;
   }
@@ -33,6 +40,7 @@ public class CedarGroupExtract {
   }
 
   @JsonProperty("schema:name")
+  @Schema(name = "schema:name", description = "Display name of the group.")
   public String getName() {
     return name;
   }
