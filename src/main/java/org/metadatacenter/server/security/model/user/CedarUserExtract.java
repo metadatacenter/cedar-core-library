@@ -6,9 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.metadatacenter.id.CedarUserId;
 
 @Schema(name = "CedarUserReference",
-    description = "A user as CEDAR names one beside something else: the owner of a resource, the "
-        + "holder of a grant, a member of a group. The identifier is the reference; the name and "
-        + "email are carried so a caller need not resolve it to display the user.")
+    description = "A reference to a user. It appears wherever a user is named beside something "
+        + "else, as the owner of a resource, the holder of a grant, or a member of a group. The "
+        + "name and email accompany the identifier so a caller need not fetch the user record to "
+        + "display them.")
 public class CedarUserExtract implements CedarUserRepresentation {
 
   private String id;

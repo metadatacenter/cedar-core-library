@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "CedarGroupReference",
-    description = "A group as CEDAR names one beside something else: the holder of a grant, or a "
-        + "group a user belongs to. The identifier is the reference; the name is carried so a "
-        + "caller need not resolve it to display the group.")
+    description = "A reference to a group. It appears wherever a group is named beside something "
+        + "else, as the holder of a grant or as a group a user belongs to. The name accompanies "
+        + "the identifier so a caller need not fetch the group record to display it.")
 public class CedarGroupExtract {
 
   private String id;
