@@ -37,21 +37,18 @@ public class BackendCallResult<T> {
     return e;
   }
 
+  // Both answer null for a result that recorded no error. They used to index into the empty list,
+  // so wrapping such a result in a CedarBackendException died with an IndexOutOfBoundsException
+  // before the exception could say anything.
   public String getFirstErrorMessage() {
-    if (errors != null) {
-      if (errors.get(0) != null) {
-        return errors.get(0).getErrorPack().getMessage();
-      }
-    }
-    return null;
+    BackendCallError firstError = getFirstError();
+    return firstError == null ? null : firstError.getErrorPack().getMessage();
   }
 
   public BackendCallError getFirstError() {
-    if (errors != null) {
-      if (errors.get(0) != null) {
-        return errors.get(0);
-      }
+    if (errors == null || errors.isEmpty()) {
+      return null;
     }
-    return null;
+    return errors.get(0);
   }
 }
