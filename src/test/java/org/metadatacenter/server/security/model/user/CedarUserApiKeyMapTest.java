@@ -4,6 +4,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.util.json.JsonMapper;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+
 public class CedarUserApiKeyMapTest {
 
   private static final String ONE_KEY =
@@ -33,6 +37,20 @@ public class CedarUserApiKeyMapTest {
     Assertions.assertFalse(map.isUnreadable(), "an unknown property must not cost the user their keys");
     Assertions.assertEquals(1, map.size());
     Assertions.assertEquals("secretA", map.get("secretA").getKey());
+  }
+
+  /** Earlier releases stored the creation date as Jackson's default local date-time, with no offset. */
+  @Test
+  public void aCreationDateStoredWithoutAnOffsetIsReadInTheSystemZone() throws Exception {
+    String fromAnEarlierRelease =
+        "{\"secretA\":{\"id\":\"idA\",\"key\":\"secretA\",\"creationDate\":\"2024-03-01T09:15:00.25\",\"enabled\":true}}";
+
+    CedarUserApiKeyMap map = asStoredInTheGraph(fromAnEarlierRelease);
+
+    Assertions.assertFalse(map.isUnreadable(), "an offset-less date must not cost the user their keys");
+    OffsetDateTime expected = LocalDateTime.of(2024, 3, 1, 9, 15, 0, 250_000_000)
+        .atZone(ZoneId.systemDefault()).toOffsetDateTime();
+    Assertions.assertEquals(expected, map.get("secretA").getCreationDate());
   }
 
   @Test
