@@ -2,6 +2,7 @@ package org.metadatacenter.util.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,22 @@ public class JsonMapperTest {
   private static final OffsetDateTime WITH_NANOS =
       OffsetDateTime.of(2026, 9, 2, 10, 30, 15, 123_456_789, ZoneOffset.ofHours(-7));
 
-  private static final List<ObjectMapper> MAPPERS = List.of(JsonMapper.MAPPER, JsonMapper.PRETTY_MAPPER);
+  private static final List<ObjectMapper> MAPPERS =
+      List.of(JsonMapper.STRICT_MAPPER, JsonMapper.TOLERANT_MAPPER, JsonMapper.PRETTY_MAPPER);
+
+  @Test
+  public void unknownPropertyPoliciesAreExplicit() throws Exception {
+    String json = "{\"when\":\"2026-09-02T10:30:15Z\",\"futureField\":true}";
+
+    Assertions.assertSame(JsonMapper.STRICT_MAPPER, JsonMapper.MAPPER);
+    Assertions.assertThrows(UnrecognizedPropertyException.class,
+        () -> JsonMapper.STRICT_MAPPER.readValue(json, Holder.class));
+    Assertions.assertThrows(UnrecognizedPropertyException.class,
+        () -> JsonMapper.PRETTY_MAPPER.readValue(json, Holder.class));
+
+    Holder read = JsonMapper.TOLERANT_MAPPER.readValue(json, Holder.class);
+    Assertions.assertEquals(OffsetDateTime.parse("2026-09-02T10:30:15Z"), read.when);
+  }
 
   /**
    * The stock serializer writes ISO-8601 with nanoseconds. Only the customised module truncates to

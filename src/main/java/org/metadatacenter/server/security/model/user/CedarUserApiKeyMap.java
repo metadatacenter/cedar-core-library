@@ -23,7 +23,7 @@ public class CedarUserApiKeyMap extends HashMap<String, CedarUserApiKey> {
 
   public CedarUserApiKeyMap(String jsonSource) {
     try {
-      CedarUserApiKeyMap deser = JsonMapper.MAPPER.readValue(jsonSource, CedarUserApiKeyMap.class);
+      CedarUserApiKeyMap deser = JsonMapper.TOLERANT_MAPPER.readValue(jsonSource, CedarUserApiKeyMap.class);
       for (String key : deser.keySet()) {
         this.put(key, deser.get(key));
       }

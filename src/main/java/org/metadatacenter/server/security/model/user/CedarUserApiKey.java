@@ -1,7 +1,6 @@
 package org.metadatacenter.server.security.model.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.metadatacenter.constant.CedarConstants;
 
 import java.nio.charset.StandardCharsets;
@@ -11,11 +10,9 @@ import java.time.OffsetDateTime;
 import java.util.HexFormat;
 
 /**
- * A stored API key. Unknown properties are ignored on purpose: these objects are read back from
- * user records written by earlier releases, and a field that a later release adds or removes must
- * not make the stored key set unreadable.
+ * A stored API key. User-record readers select the tolerant mapper so a field that a later release
+ * adds or removes does not make the stored key set unreadable.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class CedarUserApiKey {
   private String id;
   private String key;

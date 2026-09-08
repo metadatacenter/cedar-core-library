@@ -1,5 +1,6 @@
 package org.metadatacenter.server.security.model.user;
 
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.util.json.JsonMapper;
@@ -36,6 +37,19 @@ public class CedarUserApiKeyMapTest {
 
     Assertions.assertFalse(map.isUnreadable(), "an unknown property must not cost the user their keys");
     Assertions.assertEquals(1, map.size());
+    Assertions.assertEquals("secretA", map.get("secretA").getKey());
+  }
+
+  @Test
+  public void storedKeyToleranceComesFromTheSelectedMapper() throws Exception {
+    String fromALaterRelease =
+        "{\"secretA\":{\"id\":\"idA\",\"key\":\"secretA\",\"fieldAddedLater\":42}}";
+
+    Assertions.assertThrows(UnrecognizedPropertyException.class,
+        () -> JsonMapper.STRICT_MAPPER.readValue(fromALaterRelease, CedarUserApiKeyMap.class));
+    CedarUserApiKeyMap map = JsonMapper.TOLERANT_MAPPER.readValue(
+        fromALaterRelease, CedarUserApiKeyMap.class);
+
     Assertions.assertEquals("secretA", map.get("secretA").getKey());
   }
 

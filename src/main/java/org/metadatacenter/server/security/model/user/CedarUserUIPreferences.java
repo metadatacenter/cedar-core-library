@@ -1,15 +1,11 @@
 package org.metadatacenter.server.security.model.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.metadatacenter.util.json.JsonMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-// Tolerate unknown properties (like CedarUser does) so adding/removing a UI preference in one
-// service does not break deserialization of the user object in other services or from stored data.
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class CedarUserUIPreferences {
 
   private static final Logger log = LoggerFactory.getLogger(CedarUserUIPreferences.class);
@@ -52,7 +48,8 @@ public class CedarUserUIPreferences {
 
   public CedarUserUIPreferences(String jsonSource) {
     try {
-      CedarUserUIPreferences deser = JsonMapper.MAPPER.readValue(jsonSource, CedarUserUIPreferences.class);
+      CedarUserUIPreferences deser = JsonMapper.TOLERANT_MAPPER.readValue(
+          jsonSource, CedarUserUIPreferences.class);
       folderView = deser.folderView;
       resourceTypeFilters = deser.resourceTypeFilters;
       resourcePublicationStatusFilter = deser.resourcePublicationStatusFilter;
