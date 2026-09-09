@@ -12,7 +12,9 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
-@JsonIgnoreProperties(ignoreUnknown = true, value = {
+// The listed names are derived getters, kept out of the serialized payload. This type is a
+// response and is never read back, so it declares no tolerance for unknown properties.
+@JsonIgnoreProperties({
     "currentUserRole", "canRead", "canView", "canEdit", "canCreate", "canWrite", "canDelete",
     "canShare", "canManageGrants", "canMove", "canManageOpenView", "canTransferOwnership",
     "canChangeOwner", "canCreateDraft", "canPublish", "canSubmit", "canPopulate", "canCopy",

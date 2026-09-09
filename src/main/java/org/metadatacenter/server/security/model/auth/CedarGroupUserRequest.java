@@ -1,10 +1,8 @@
 package org.metadatacenter.server.security.model.auth;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.metadatacenter.server.security.model.permission.resource.ResourcePermissionUser;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Schema(name = "GroupMemberRequest",
     description = "One user's place in a group, as a write states it. The user is named by "
         + "identifier alone. The two flags say what that user's standing should become.",

@@ -1,11 +1,9 @@
 package org.metadatacenter.server.security.model.permission.category;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.metadatacenter.id.CedarGroupId;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class CategoryPermissionGroup {
 
   private String id;

@@ -411,9 +411,19 @@ class ResourcePermissionModelTest {
   }
 
   @Test
-  void requestJsonIgnoresUnknownProperties() throws Exception {
+  void requestJsonRefusesUnknownProperties() {
     String json = "{\"owner\":{\"@id\":\"" + OWNER_ID + "\",\"label\":\"ignored\"},"
         + "\"userPermissions\":[],\"groupPermissions\":[],\"futureField\":true}";
+
+    assertThrows(UnrecognizedPropertyException.class,
+        () -> mapper.readValue(json, ResourcePermissionsRequest.class),
+        "a permission request is a body CEDAR owns, and carries only what it declares");
+  }
+
+  @Test
+  void requestJsonReadsWhatItDeclares() throws Exception {
+    String json = "{\"owner\":{\"@id\":\"" + OWNER_ID + "\"},"
+        + "\"userPermissions\":[],\"groupPermissions\":[]}";
 
     ResourcePermissionsRequest request = mapper.readValue(json, ResourcePermissionsRequest.class);
 
