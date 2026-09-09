@@ -34,7 +34,7 @@ public class JsonMapperTest {
   public void unknownPropertyPoliciesAreExplicit() throws Exception {
     String json = "{\"when\":\"2026-09-02T10:30:15Z\",\"futureField\":true}";
 
-    Assertions.assertSame(JsonMapper.STRICT_MAPPER, JsonMapper.MAPPER);
+    Assertions.assertSame(JsonMapper.STRICT_MAPPER, JsonMapper.STRICT_MAPPER);
     Assertions.assertThrows(UnrecognizedPropertyException.class,
         () -> JsonMapper.STRICT_MAPPER.readValue(json, Holder.class));
     Assertions.assertThrows(UnrecognizedPropertyException.class,
@@ -61,9 +61,9 @@ public class JsonMapperTest {
 
   @Test
   public void offsetDateTimeInsideAnObjectIsWrittenTheSameWay() throws Exception {
-    String written = JsonMapper.MAPPER.writeValueAsString(new Holder(WITH_NANOS));
+    String written = JsonMapper.STRICT_MAPPER.writeValueAsString(new Holder(WITH_NANOS));
     Assertions.assertTrue(written.matches("\\{\"when\":" + XSD_DATE_TIME.pattern() + "\\}"), written);
-    Holder read = JsonMapper.MAPPER.readValue(written, Holder.class);
+    Holder read = JsonMapper.STRICT_MAPPER.readValue(written, Holder.class);
     Assertions.assertTrue(read.when.isEqual(WITH_NANOS.truncatedTo(ChronoUnit.SECONDS)));
   }
 
@@ -93,13 +93,13 @@ public class JsonMapperTest {
   @Test
   public void theStockTypesOfTheModuleStillWork() throws Exception {
     LocalDateTime local = LocalDateTime.of(2026, 9, 2, 10, 30, 15);
-    String written = JsonMapper.MAPPER.writeValueAsString(local);
+    String written = JsonMapper.STRICT_MAPPER.writeValueAsString(local);
     Assertions.assertEquals("\"2026-09-02T10:30:15\"", written);
-    Assertions.assertEquals(local, JsonMapper.MAPPER.readValue(written, LocalDateTime.class));
+    Assertions.assertEquals(local, JsonMapper.STRICT_MAPPER.readValue(written, LocalDateTime.class));
   }
 
   private static OffsetDateTime read(String text) throws Exception {
-    return JsonMapper.MAPPER.readValue("\"" + text + "\"", OffsetDateTime.class);
+    return JsonMapper.STRICT_MAPPER.readValue("\"" + text + "\"", OffsetDateTime.class);
   }
 
   public static final class Holder {

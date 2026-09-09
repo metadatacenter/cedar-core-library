@@ -30,7 +30,7 @@ public class CedarListOperation implements CedarOperationDescriptor {
 
   @Override
   public JsonNode asJson() {
-    ObjectNode objectNode = JsonMapper.MAPPER.createObjectNode();
+    ObjectNode objectNode = JsonMapper.STRICT_MAPPER.createObjectNode();
     objectNode.put("type", "list");
     objectNode.put("className", clazz.getName());
     objectNode.put("simpleClassName", clazz.getSimpleName());

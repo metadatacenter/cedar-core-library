@@ -16,7 +16,7 @@ public class CedarUserApiKeyMapTest {
 
   /** The graph stores the map as a JSON string, which Jackson passes to the String constructor. */
   private static CedarUserApiKeyMap asStoredInTheGraph(String stored) throws Exception {
-    return JsonMapper.MAPPER.readValue(JsonMapper.MAPPER.writeValueAsString(stored), CedarUserApiKeyMap.class);
+    return JsonMapper.STRICT_MAPPER.readValue(JsonMapper.STRICT_MAPPER.writeValueAsString(stored), CedarUserApiKeyMap.class);
   }
 
   @Test
@@ -87,7 +87,7 @@ public class CedarUserApiKeyMapTest {
   public void theUnreadableFlagIsNotSerializedIntoTheStoredMap() throws Exception {
     CedarUserApiKeyMap map = asStoredInTheGraph("{\"secretA\":{\"id\":");
 
-    String written = JsonMapper.MAPPER.writeValueAsString(map);
+    String written = JsonMapper.STRICT_MAPPER.writeValueAsString(map);
 
     Assertions.assertFalse(written.contains("unreadable"), "the flag is state about the read, not a stored key");
   }
