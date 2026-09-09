@@ -1,7 +1,6 @@
 package org.metadatacenter.server.security.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.metadatacenter.id.CedarUserId;
 import org.metadatacenter.server.security.model.auth.CedarPermission;
@@ -13,7 +12,6 @@ import java.util.Set;
 
 import static org.metadatacenter.constant.HttpConstants.HTTP_AUTH_HEADER_APIKEY_PREFIX;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class CedarUser implements CedarUserRepresentation {
 
   private String id;

@@ -1,25 +1,30 @@
 package org.metadatacenter.server.security.model.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.metadatacenter.constant.CedarConstants;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.HexFormat;
 
 /**
- * A stored API key. Unknown properties are ignored on purpose: these objects are read back from
- * user records written by earlier releases, and a field that a later release adds or removes must
- * not make the stored key set unreadable.
+ * A stored API key. User-record readers select the tolerant mapper so a field that a later release
+ * adds or removes does not make the stored key set unreadable.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class CedarUserApiKey {
   private String id;
   private String key;
   private String serviceName;
   private String description;
-  private LocalDateTime creationDate;
+  /**
+   * Declared on the field so that every mapper, Dropwizard's included, writes CEDAR's {@code xsd:dateTime}
+   * shape. Dropwizard's mapper keeps Jackson's default of writing dates as timestamps, which would turn
+   * this into a decimal epoch second that no client expects.
+   */
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CedarConstants.xsdDateTimeFormatterString)
+  private OffsetDateTime creationDate;
   private boolean enabled;
 
   public CedarUserApiKey() {
@@ -68,11 +73,11 @@ public class CedarUserApiKey {
     this.description = description;
   }
 
-  public LocalDateTime getCreationDate() {
+  public OffsetDateTime getCreationDate() {
     return creationDate;
   }
 
-  public void setCreationDate(LocalDateTime creationDate) {
+  public void setCreationDate(OffsetDateTime creationDate) {
     this.creationDate = creationDate;
   }
 

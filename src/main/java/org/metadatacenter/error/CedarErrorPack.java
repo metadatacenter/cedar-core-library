@@ -136,6 +136,20 @@ public class CedarErrorPack {
     return this;
   }
 
+  /**
+   * Whether anything decided this pack's status, either by choosing one or by recording an error
+   * type that implies one.
+   *
+   * <p>The field initialiser is a fallback, not a decision: a pack nobody statused reports 500, and
+   * that is how a client mistake gets reported as a server fault. The exception mapper asks this to
+   * tell a deliberate 500 from one that merely fell through, since the two are indistinguishable by
+   * the status alone.
+   */
+  public boolean hasResolvedStatus() {
+    return statusChosenExplicitly || (errorType != null && errorType != CedarErrorType.NONE
+        && errorType.getStatus() != null);
+  }
+
   public CedarErrorType getErrorType() {
     return errorType;
   }

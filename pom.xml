@@ -6,12 +6,12 @@
   <parent>
     <groupId>org.metadatacenter</groupId>
     <artifactId>cedar-parent</artifactId>
-    <version>2.9.9</version>
+    <version>2.9.10</version>
   </parent>
 
   <groupId>org.metadatacenter</groupId>
   <artifactId>cedar-core-library</artifactId>
-  <version>2.9.9</version>
+  <version>2.9.10</version>
   <packaging>jar</packaging>
 
   <name>CEDAR Core Library</name>
@@ -46,6 +46,16 @@
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+
+    <!-- Carries the OpenAPI annotations on the permissions payload, so the one description of it
+         sits on the types Jackson serializes instead of being hand-written by each service that
+         publishes it. The resource server and the monitor server both publish that payload, and
+         their two hand-written descriptions had already drifted apart. Documentation only: no
+         runtime code reads them. -->
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations-jakarta</artifactId>
     </dependency>
 
     <dependency>

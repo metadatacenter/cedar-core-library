@@ -1,5 +1,6 @@
 package org.metadatacenter.server.security.model.auth;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.metadatacenter.server.security.model.permission.resource.ResourceRole;
 
 public abstract class CedarNodePermission {
@@ -12,6 +13,8 @@ public abstract class CedarNodePermission {
 
   protected abstract String getObjectId();
 
+  @Schema(name = "role", requiredMode = Schema.RequiredMode.REQUIRED,
+      description = "The role the grant confers.")
   public ResourceRole getRole() {
     return role;
   }

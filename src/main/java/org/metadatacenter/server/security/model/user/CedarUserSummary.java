@@ -1,9 +1,7 @@
 package org.metadatacenter.server.security.model.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class CedarUserSummary {
 
   private String id;
