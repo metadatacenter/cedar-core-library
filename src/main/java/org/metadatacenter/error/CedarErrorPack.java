@@ -118,18 +118,6 @@ public class CedarErrorPack {
     return status == null ? CedarResponseStatus.INTERNAL_SERVER_ERROR.getStatusCode() : status.getStatusCode();
   }
 
-  /**
-   * The message under the key {@code CedarResponse} uses for it.
-   *
-   * <p>The two shapes name the same thing differently: this pack calls it {@code message}, and a refusal
-   * built through {@code CedarResponse} calls it {@code errorMessage}. Both keys are now present and
-   * carry the same value, so a client reading either gets the message rather than null from whichever
-   * half of the system it happened to reach.
-   */
-  public String getErrorMessage() {
-    return getMessage();
-  }
-
   public CedarErrorPack status(CedarResponseStatus status) {
     this.status = status;
     this.statusChosenExplicitly = true;
