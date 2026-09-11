@@ -22,8 +22,8 @@ public class CedarUserApiKeyTest {
     Assertions.assertTrue(id.startsWith("legacy-"));
     Assertions.assertFalse(id.contains(key.getKey()));
 
-    CedarUserApiKey roundTripped = JsonMapper.MAPPER.readValue(
-        JsonMapper.MAPPER.writeValueAsString(key), CedarUserApiKey.class);
+    CedarUserApiKey roundTripped = JsonMapper.STRICT_MAPPER.readValue(
+        JsonMapper.STRICT_MAPPER.writeValueAsString(key), CedarUserApiKey.class);
     Assertions.assertEquals(id, roundTripped.getId());
   }
 
@@ -35,10 +35,10 @@ public class CedarUserApiKeyTest {
     key.setKey("secret");
     key.setCreationDate(created);
 
-    String written = JsonMapper.MAPPER.writeValueAsString(key);
+    String written = JsonMapper.STRICT_MAPPER.writeValueAsString(key);
     // The formatter renders the instant in the system zone, so only the shape is fixed: whole seconds and an offset.
     Assertions.assertTrue(written.matches(".*\"creationDate\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:\\d{2})\".*"), written);
-    CedarUserApiKey roundTripped = JsonMapper.MAPPER.readValue(written, CedarUserApiKey.class);
+    CedarUserApiKey roundTripped = JsonMapper.STRICT_MAPPER.readValue(written, CedarUserApiKey.class);
     Assertions.assertTrue(roundTripped.getCreationDate().isEqual(created.truncatedTo(ChronoUnit.SECONDS)), written);
   }
 

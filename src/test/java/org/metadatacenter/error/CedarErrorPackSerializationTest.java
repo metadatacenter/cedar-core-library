@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.metadatacenter.http.CedarResponseStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -33,12 +34,11 @@ class CedarErrorPackSerializationTest {
   }
 
   @Test
-  @DisplayName("The message is readable under both keys")
-  void carriesBothMessageKeys() throws Exception {
+  @DisplayName("The message is readable under its one key")
+  void carriesTheMessage() throws Exception {
     JsonNode rendered = serialize(new CedarErrorPack().message("the artifact was not found"));
     assertEquals("the artifact was not found", rendered.get("message").asText());
-    assertEquals("the artifact was not found", rendered.get("errorMessage").asText(),
-        "a client reading errorMessage should not get null from an exception-mapped failure");
+    assertNull(rendered.get("errorMessage"), "the alias is gone from every shape");
   }
 
   @Test

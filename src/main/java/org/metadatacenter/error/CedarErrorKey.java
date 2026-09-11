@@ -156,6 +156,7 @@ public enum CedarErrorKey {
   DATACITE_DOI_DISABLED("dataCiteDOIDisabled"),
 
 
+  PINNED_VERSION_UNAVAILABLE("pinnedVersionUnavailable"),
   RESOURCE_NOT_FOUND("resourceNotFound"),
   INTERNAL_ERROR("internalError");
 

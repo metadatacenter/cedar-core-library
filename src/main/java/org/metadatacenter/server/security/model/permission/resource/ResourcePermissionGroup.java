@@ -1,13 +1,11 @@
 package org.metadatacenter.server.security.model.permission.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.metadatacenter.id.CedarGroupId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ResourcePermissionGroup {
 
   private String id;

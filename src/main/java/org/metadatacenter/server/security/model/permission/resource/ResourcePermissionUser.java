@@ -1,14 +1,12 @@
 package org.metadatacenter.server.security.model.permission.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.metadatacenter.id.CedarUserId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Schema(name = "CedarUserIdReference",
     description = "A user named by identifier alone. A write uses it wherever a listing answers "
         + "with a fuller user reference, because only the identifier decides which user is meant.",
