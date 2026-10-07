@@ -158,6 +158,8 @@ public enum CedarErrorKey {
 
   PINNED_VERSION_UNAVAILABLE("pinnedVersionUnavailable"),
   RESOURCE_NOT_FOUND("resourceNotFound"),
+  RATE_LIMIT_EXCEEDED("rateLimitExceeded"),
+  RATE_LIMIT_UNAVAILABLE("rateLimitUnavailable"),
   INTERNAL_ERROR("internalError");
 
   private final String value;
