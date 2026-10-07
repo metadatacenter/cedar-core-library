@@ -17,7 +17,8 @@ public class CedarProcessingException extends CedarException {
   }
 
   public CedarProcessingException(Exception sourceException) {
-    super(sourceException);
+    // The cause remains available to server logs; its message may contain backend internals.
+    super("Unable to process request", sourceException);
     errorPack.status(CedarResponseStatus.INTERNAL_SERVER_ERROR);
   }
 
