@@ -388,6 +388,97 @@ class ResourcePermissionModelTest {
     assertNull(noGrant.role());
   }
 
+  /**
+   * Administrative permissions on folders, ordinary and protected. Root, system and home folders
+   * all reach the policy as a protected folder, and the restrictions must still apply after the
+   * administrative capabilities are added.
+   */
+  @ParameterizedTest(name = "resource={0}, protected={1}, owner={2}, permissions={3}")
+  @MethodSource("administrativeCapabilityMatrix")
+  void administrativeCapabilityMatrix(CedarResourceType resourceType, boolean protectedFolder,
+                                      boolean owner, Set<CedarPermission> permissions,
+                                      Set<ResourceCapability> expectedCapabilities) {
+    CedarUser administrator = userWithPermissions(permissions.toArray(CedarPermission[]::new));
+
+    Set<ResourceCapability> capabilities = ResourceCapabilityPolicy.evaluate(
+        new ResourceAuthority(null, owner),
+        new ResourceAccessContext(resourceType, protectedFolder), administrator);
+
+    assertEquals(expectedCapabilities, capabilities);
+  }
+
+  private static Stream<Arguments> administrativeCapabilityMatrix() {
+    Set<CedarPermission> read = Set.of(CedarPermission.READ_NOT_READABLE_NODE);
+    Set<CedarPermission> write = Set.of(CedarPermission.WRITE_NOT_WRITABLE_NODE);
+    Set<CedarPermission> grants = Set.of(CedarPermission.UPDATE_PERMISSION_NOT_WRITABLE_NODE);
+    Set<CedarPermission> all = Set.of(
+        CedarPermission.READ_NOT_READABLE_NODE,
+        CedarPermission.WRITE_NOT_WRITABLE_NODE,
+        CedarPermission.UPDATE_PERMISSION_NOT_WRITABLE_NODE);
+    Set<ResourceCapability> folderRead = Set.of(
+        ResourceCapability.READ_RESOURCE,
+        ResourceCapability.LIST_FOLDER_CONTENTS);
+    Set<ResourceCapability> protectedFolderWrite = Set.of(
+        ResourceCapability.UPDATE_RESOURCE,
+        ResourceCapability.CREATE_IN_FOLDER,
+        ResourceCapability.COPY_INTO_FOLDER,
+        ResourceCapability.MOVE_INTO_FOLDER);
+    Set<ResourceCapability> folderWrite = Set.of(
+        ResourceCapability.UPDATE_RESOURCE,
+        ResourceCapability.CREATE_IN_FOLDER,
+        ResourceCapability.COPY_INTO_FOLDER,
+        ResourceCapability.MOVE_INTO_FOLDER,
+        ResourceCapability.DELETE_RESOURCE,
+        ResourceCapability.MOVE_RESOURCE,
+        ResourceCapability.MANAGE_OPENVIEW);
+    Set<ResourceCapability> protectedFolderAll = Set.of(
+        ResourceCapability.READ_RESOURCE,
+        ResourceCapability.LIST_FOLDER_CONTENTS,
+        ResourceCapability.UPDATE_RESOURCE,
+        ResourceCapability.CREATE_IN_FOLDER,
+        ResourceCapability.COPY_INTO_FOLDER,
+        ResourceCapability.MOVE_INTO_FOLDER);
+    Set<ResourceCapability> folderAll = Set.of(
+        ResourceCapability.READ_RESOURCE,
+        ResourceCapability.LIST_FOLDER_CONTENTS,
+        ResourceCapability.UPDATE_RESOURCE,
+        ResourceCapability.CREATE_IN_FOLDER,
+        ResourceCapability.COPY_INTO_FOLDER,
+        ResourceCapability.MOVE_INTO_FOLDER,
+        ResourceCapability.DELETE_RESOURCE,
+        ResourceCapability.MOVE_RESOURCE,
+        ResourceCapability.MANAGE_OPENVIEW,
+        ResourceCapability.MANAGE_GRANTS);
+    Set<ResourceCapability> templateAll = Set.of(
+        ResourceCapability.READ_RESOURCE,
+        ResourceCapability.UPDATE_RESOURCE,
+        ResourceCapability.DELETE_RESOURCE,
+        ResourceCapability.MOVE_RESOURCE,
+        ResourceCapability.MANAGE_OPENVIEW,
+        ResourceCapability.MANAGE_GRANTS);
+    CedarResourceType folder = CedarResourceType.FOLDER;
+    return Stream.of(
+        Arguments.of(CedarResourceType.TEMPLATE, false, false, read,
+            Set.of(ResourceCapability.READ_RESOURCE)),
+        Arguments.of(CedarResourceType.TEMPLATE, false, false, write, Set.of(
+            ResourceCapability.UPDATE_RESOURCE,
+            ResourceCapability.DELETE_RESOURCE,
+            ResourceCapability.MOVE_RESOURCE,
+            ResourceCapability.MANAGE_OPENVIEW)),
+        Arguments.of(CedarResourceType.TEMPLATE, false, false, grants,
+            Set.of(ResourceCapability.MANAGE_GRANTS)),
+        Arguments.of(CedarResourceType.TEMPLATE, false, false, all, templateAll),
+        Arguments.of(folder, false, false, read, folderRead),
+        Arguments.of(folder, false, false, write, folderWrite),
+        Arguments.of(folder, false, false, grants, Set.of(ResourceCapability.MANAGE_GRANTS)),
+        Arguments.of(folder, false, false, all, folderAll),
+        Arguments.of(folder, true, false, read, folderRead),
+        Arguments.of(folder, true, false, write, protectedFolderWrite),
+        Arguments.of(folder, true, false, grants, Set.of()),
+        Arguments.of(folder, true, false, all, protectedFolderAll),
+        Arguments.of(folder, true, true, all, protectedFolderAll));
+  }
+
   @ParameterizedTest
   @EnumSource(ResourceCapability.class)
   void protectedFoldersApplyTheSameRestrictionsToProjectionAndEnforcement(ResourceCapability capability) {
