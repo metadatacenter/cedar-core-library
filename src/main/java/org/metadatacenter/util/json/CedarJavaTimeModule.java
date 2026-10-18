@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.metadatacenter.constant.CedarConstants;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -22,11 +21,8 @@ import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalQueries;
 
 /**
- * Builds the estate's {@link JavaTimeModule}. It is the stock module, except that an {@link OffsetDateTime}
- * is written with {@link CedarConstants#xsdDateTimeFormatter}, CEDAR's {@code xsd:dateTime} shape of whole
- * seconds and a UTC offset, the form every {@code pav:createdOn} in the estate carries. An offset needs a
- * value that has one, which is why the customised type is {@code OffsetDateTime} and not
- * {@code LocalDateTime}.
+ * Builds the estate's {@link JavaTimeModule}. Offset timestamps preserve the local date,
+ * explicit offset and nanoseconds. Generated whole-second timestamps keep their existing shape.
  * <p>
  * Register the module this builds on its own. Jackson ignores a second module with the same type id,
  * so a stock {@code JavaTimeModule} registered first would silently shadow the customised one.
@@ -70,7 +66,7 @@ public final class CedarJavaTimeModule {
 
     @Override
     public void serialize(OffsetDateTime value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-      gen.writeString(CedarConstants.xsdDateTimeFormatter.format(value));
+      gen.writeString(ProvenanceTimestamp.format(value));
     }
   }
 

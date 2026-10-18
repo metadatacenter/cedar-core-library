@@ -3,6 +3,7 @@ package org.metadatacenter.util.json;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.core.JsonParser;
 
 /**
  * The shared mappers. Typed reads select an explicit compatibility policy: strict reads reject
@@ -29,8 +30,16 @@ public final class JsonMapper {
 
   public static final ObjectMapper PRETTY_MAPPER = create(true, true);
 
+  /** Raw document policy shared by library and HTTP boundaries, before model validation. */
+  public static ObjectMapper applySourcePolicy(ObjectMapper mapper) {
+    mapper.enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
+    mapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
+    mapper.enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
+    return mapper;
+  }
+
   private static ObjectMapper create(boolean failOnUnknownProperties, boolean pretty) {
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = applySourcePolicy(new ObjectMapper());
     mapper.registerModule(CedarJavaTimeModule.create());
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, failOnUnknownProperties);
     mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);

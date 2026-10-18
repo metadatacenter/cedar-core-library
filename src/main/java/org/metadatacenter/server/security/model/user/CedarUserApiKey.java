@@ -1,7 +1,6 @@
 package org.metadatacenter.server.security.model.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.metadatacenter.constant.CedarConstants;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -23,7 +22,7 @@ public class CedarUserApiKey {
    * shape. Dropwizard's mapper keeps Jackson's default of writing dates as timestamps, which would turn
    * this into a decimal epoch second that no client expects.
    */
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CedarConstants.xsdDateTimeFormatterString)
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
   private OffsetDateTime creationDate;
   private boolean enabled;
 

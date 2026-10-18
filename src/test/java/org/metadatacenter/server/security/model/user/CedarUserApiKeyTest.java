@@ -8,7 +8,6 @@ import org.metadatacenter.util.json.JsonMapper;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 public class CedarUserApiKeyTest {
@@ -27,7 +26,7 @@ public class CedarUserApiKeyTest {
     Assertions.assertEquals(id, roundTripped.getId());
   }
 
-  /** The graph stores the key with whole seconds and an offset; nanoseconds do not survive, the instant does. */
+  /** The graph round trip preserves the complete creation timestamp. */
   @Test
   public void creationDateSurvivesTheGraphRoundTrip() throws Exception {
     OffsetDateTime created = OffsetDateTime.of(2026, 9, 2, 10, 30, 15, 123_456_789, ZoneOffset.ofHours(-7));
@@ -36,10 +35,9 @@ public class CedarUserApiKeyTest {
     key.setCreationDate(created);
 
     String written = JsonMapper.STRICT_MAPPER.writeValueAsString(key);
-    // The formatter renders the instant in the system zone, so only the shape is fixed: whole seconds and an offset.
-    Assertions.assertTrue(written.matches(".*\"creationDate\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:\\d{2})\".*"), written);
+    Assertions.assertTrue(written.contains("\"creationDate\":\"2026-09-02T10:30:15.123456789-07:00\""), written);
     CedarUserApiKey roundTripped = JsonMapper.STRICT_MAPPER.readValue(written, CedarUserApiKey.class);
-    Assertions.assertTrue(roundTripped.getCreationDate().isEqual(created.truncatedTo(ChronoUnit.SECONDS)), written);
+    Assertions.assertTrue(roundTripped.getCreationDate().isEqual(created), written);
   }
 
   /**
@@ -56,9 +54,9 @@ public class CedarUserApiKeyTest {
 
     String written = likeDropwizard.writeValueAsString(key);
 
-    Assertions.assertTrue(written.contains("\"creationDate\":\"2026-09-02T10:30:15-07:00\""), written);
+    Assertions.assertTrue(written.contains("\"creationDate\":\"2026-09-02T10:30:15.123456789-07:00\""), written);
     CedarUserApiKey read = likeDropwizard.readValue(written, CedarUserApiKey.class);
-    Assertions.assertTrue(read.getCreationDate().isEqual(key.getCreationDate().truncatedTo(ChronoUnit.SECONDS)));
+    Assertions.assertTrue(read.getCreationDate().isEqual(key.getCreationDate()));
   }
 
   @Test
