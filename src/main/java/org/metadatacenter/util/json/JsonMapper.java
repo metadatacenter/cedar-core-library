@@ -3,7 +3,6 @@ package org.metadatacenter.util.json;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.core.JsonParser;
 
 /**
  * The shared mappers. Typed reads select an explicit compatibility policy: strict reads reject
@@ -32,10 +31,7 @@ public final class JsonMapper {
 
   /** Raw document policy shared by library and HTTP boundaries, before model validation. */
   public static ObjectMapper applySourcePolicy(ObjectMapper mapper) {
-    mapper.enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
-    mapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
-    mapper.enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
-    return mapper;
+    return org.metadatacenter.model.policy.JsonSourcePolicy.apply(mapper);
   }
 
   private static ObjectMapper create(boolean failOnUnknownProperties, boolean pretty) {
