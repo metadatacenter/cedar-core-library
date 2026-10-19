@@ -16,19 +16,27 @@ import java.util.regex.Pattern;
 
 public class JsonMapperTest {
 
-  /**
-   * Whole seconds and a UTC offset, the shape of every {@code pav:createdOn} CEDAR emits. The formatter
-   * renders the value in the system zone, and prints {@code Z} rather than {@code +00:00} when that zone is
-   * UTC, as it is on the CI runners and on the production hosts.
-   */
+  /** Whole seconds remain valid; fractional seconds are preserved when present. */
   private static final Pattern XSD_DATE_TIME =
-      Pattern.compile("\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:\\d{2})\"");
+      Pattern.compile("\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?(Z|[+-]\\d{2}:\\d{2})\"");
 
   private static final OffsetDateTime WITH_NANOS =
       OffsetDateTime.of(2026, 9, 2, 10, 30, 15, 123_456_789, ZoneOffset.ofHours(-7));
 
   private static final List<ObjectMapper> MAPPERS =
       List.of(JsonMapper.STRICT_MAPPER, JsonMapper.TOLERANT_MAPPER, JsonMapper.PRETTY_MAPPER);
+
+  @Test
+  public void rawDocumentsRejectAmbiguityAndKeepExactNumbers() throws Exception {
+    for (ObjectMapper mapper : MAPPERS) {
+      Assertions.assertThrows(java.io.IOException.class, () -> mapper.readTree("{\"x\":1,\"x\":2}"));
+      Assertions.assertThrows(java.io.IOException.class, () -> mapper.readTree("{\"x\":1} {}"));
+      var tree = mapper.readTree("{\"integer\":9223372036854775808,\"decimal\":0.10000000000000001}");
+      Assertions.assertEquals("9223372036854775808", tree.get("integer").asText());
+      Assertions.assertEquals("0.10000000000000001", tree.get("decimal").asText());
+      Assertions.assertEquals(tree, mapper.readTree(mapper.writeValueAsString(tree)));
+    }
+  }
 
   @Test
   public void unknownPropertyPoliciesAreExplicit() throws Exception {
@@ -44,18 +52,14 @@ public class JsonMapperTest {
     Assertions.assertEquals(OffsetDateTime.parse("2026-09-02T10:30:15Z"), read.when);
   }
 
-  /**
-   * The stock serializer writes ISO-8601 with nanoseconds. Only the customised module truncates to
-   * seconds, so a value with nanoseconds tells the two apart: this fails if a stock JavaTimeModule is
-   * registered before ours, which Jackson's duplicate-module rule turns into a silent no-op for ours.
-   */
+  /** A typed JSON round trip must not discard the precision carried by its timestamp. */
   @Test
   public void offsetDateTimeIsWrittenInCedarsXsdDateTimeShapeByBothMappers() throws Exception {
     for (ObjectMapper mapper : MAPPERS) {
       String written = mapper.writeValueAsString(WITH_NANOS);
       Assertions.assertTrue(XSD_DATE_TIME.matcher(written).matches(), written);
       OffsetDateTime read = mapper.readValue(written, OffsetDateTime.class);
-      Assertions.assertTrue(read.isEqual(WITH_NANOS.truncatedTo(ChronoUnit.SECONDS)), written);
+      Assertions.assertTrue(read.isEqual(WITH_NANOS), written);
     }
   }
 
@@ -64,7 +68,7 @@ public class JsonMapperTest {
     String written = JsonMapper.STRICT_MAPPER.writeValueAsString(new Holder(WITH_NANOS));
     Assertions.assertTrue(written.matches("\\{\"when\":" + XSD_DATE_TIME.pattern() + "\\}"), written);
     Holder read = JsonMapper.STRICT_MAPPER.readValue(written, Holder.class);
-    Assertions.assertTrue(read.when.isEqual(WITH_NANOS.truncatedTo(ChronoUnit.SECONDS)));
+    Assertions.assertTrue(read.when.isEqual(WITH_NANOS));
   }
 
   /** Records written before the creation date carried an offset hold a local date-time, read in the system zone. */

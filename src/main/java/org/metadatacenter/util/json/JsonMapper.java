@@ -29,8 +29,13 @@ public final class JsonMapper {
 
   public static final ObjectMapper PRETTY_MAPPER = create(true, true);
 
+  /** Raw document policy shared by library and HTTP boundaries, before model validation. */
+  public static ObjectMapper applySourcePolicy(ObjectMapper mapper) {
+    return org.metadatacenter.model.policy.JsonSourcePolicy.apply(mapper);
+  }
+
   private static ObjectMapper create(boolean failOnUnknownProperties, boolean pretty) {
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = applySourcePolicy(new ObjectMapper());
     mapper.registerModule(CedarJavaTimeModule.create());
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, failOnUnknownProperties);
     mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
