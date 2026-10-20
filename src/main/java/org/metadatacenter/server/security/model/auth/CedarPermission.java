@@ -45,7 +45,6 @@ public enum CedarPermission {
 
   LOGGED_IN(CedarObjectConstants.LOGGED_IN, CedarObjectConstants.ACCESS_READ),
   SEARCH_INDEX_REINDEX(CedarObjectConstants.SEARCH_INDEX, CedarObjectConstants.ACCESS_CREATE),
-  RULES_INDEX_REINDEX(CedarObjectConstants.RULES_INDEX, CedarObjectConstants.ACCESS_CREATE),
   INCLUSION_SUBGRAPH_RECREATE(CedarObjectConstants.INCLUSION_SUBGRAPH, CedarObjectConstants.ACCESS_CREATE),
   UPDATE_PERMISSION_NOT_WRITABLE_NODE(CedarObjectConstants.NOT_WRITABLE_NODE_PERMISSIONS, CedarObjectConstants.ACCESS_UPDATE),
   READ_NOT_READABLE_NODE(CedarObjectConstants.NOT_READABLE_NODE, CedarObjectConstants.ACCESS_READ),

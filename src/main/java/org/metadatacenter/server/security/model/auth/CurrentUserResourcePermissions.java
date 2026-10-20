@@ -17,8 +17,8 @@ import java.util.Set;
 @JsonIgnoreProperties({
     "currentUserRole", "canRead", "canView", "canEdit", "canCreate", "canWrite", "canDelete",
     "canShare", "canManageGrants", "canMove", "canManageOpenView", "canTransferOwnership",
-    "canChangeOwner", "canCreateDraft", "canPublish", "canSubmit", "canPopulate", "canCopy",
-    "canMakeOpen", "canMakeNotOpen"
+    "canChangeOwner", "canCreateDraft", "canPublish", "canPopulate", "canCopy", "canMakeOpen",
+    "canMakeNotOpen"
 })
 public class CurrentUserResourcePermissions {
   private ResourceRole role;
@@ -154,10 +154,6 @@ public class CurrentUserResourcePermissions {
 
   public boolean isCanPublish() {
     return availableActions.contains(ResourceAction.PUBLISH);
-  }
-
-  public boolean isCanSubmit() {
-    return availableActions.contains(ResourceAction.SUBMIT);
   }
 
   public boolean isCanPopulate() {

@@ -6,12 +6,9 @@ public enum ServerName {
   MESSAGING("messaging", "CEDAR Messaging Server"),
   REPO("repo", "CEDAR Repo Server"),
   RESOURCE("resource", "CEDAR Resource Server"),
-  SCHEMA("schema", "CEDAR Schema Server"),
-  SUBMISSION("submission", "CEDAR Submission Server"),
   ARTIFACT("artifact", "CEDAR Template Server"),
   TERMINOLOGY("terminology", "CEDAR Terminology Server"),
   USER("user", "CEDAR User Server"),
-  VALUERECOMMENDER("valuerecommender", "CEDAR ValueRecommender Server"),
   WORKER("worker", "CEDAR Worker Server"),
   OPENVIEW("openview", "CEDAR OpenView Server"),
   MONITOR("monitor", "CEDAR Monitor Server"),
@@ -23,10 +20,10 @@ public enum ServerName {
   /**
    * What this server calls itself on its index page.
    *
-   * <p>Not derived from the name: the display forms capitalise differently (OpenView,
-   * ValueRecommender) and the artifact server has reported itself as "CEDAR Template Server" since
-   * before it was renamed. Each string is what that server's index page has always returned, kept
-   * here so the fifteen identical IndexResource subclasses that carried them could go.
+   * <p>Not derived from the name: the display forms capitalise differently (OpenView) and the
+   * artifact server has reported itself as "CEDAR Template Server" since before it was renamed. Each
+   * string is what that server's index page has always returned, kept here so the identical
+   * IndexResource subclasses that carried them could go.
    */
   private final String displayName;
 
