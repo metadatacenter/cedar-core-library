@@ -45,6 +45,19 @@ class CedarErrorPackStatusResolutionTest {
   }
 
   @Test
+  @DisplayName("A chosen status survives an error type recorded after it, on the pack and on a copy")
+  void chosenStatusSurvivesALaterErrorType() {
+    CedarErrorPack pack = new CedarErrorPack().status(CedarResponseStatus.FORBIDDEN)
+        .errorType(CedarErrorType.INVALID_ARGUMENT);
+    assertEquals(CedarResponseStatus.FORBIDDEN, pack.getStatus());
+    assertEquals(CedarErrorType.INVALID_ARGUMENT, pack.getErrorType());
+
+    CedarErrorPack copy = new CedarErrorPack(new CedarErrorPack().status(CedarResponseStatus.NOT_FOUND))
+        .errorType(CedarErrorType.INVALID_ARGUMENT);
+    assertEquals(CedarResponseStatus.NOT_FOUND, copy.getStatus());
+  }
+
+  @Test
   @DisplayName("A copy carries the resolution with the status")
   void copyCarriesResolution() {
     CedarErrorPack chosen = new CedarErrorPack().status(CedarResponseStatus.NOT_FOUND);

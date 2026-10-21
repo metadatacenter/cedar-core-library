@@ -10,10 +10,12 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.metadatacenter.server.security.model.auth.CedarNodeGroupPermission;
+import org.metadatacenter.server.security.model.auth.CedarNodeMaterializedPermissions;
 import org.metadatacenter.server.security.model.auth.CedarNodePermission;
 import org.metadatacenter.server.security.model.auth.CedarNodePermissionsWithExtract;
 import org.metadatacenter.server.security.model.auth.CedarNodeUserPermission;
 import org.metadatacenter.server.security.model.auth.CurrentUserResourcePermissions;
+import org.metadatacenter.server.security.model.auth.NodeSharePermission;
 import org.metadatacenter.model.CedarResourceType;
 import org.metadatacenter.server.security.model.permission.resource.ResourceAction;
 import org.metadatacenter.server.security.model.permission.resource.ResourceActionPolicy;
@@ -99,6 +101,34 @@ class ResourcePermissionModelTest {
   }, nullValues = "<null>")
   void compositeKeyIdExtractionIsStable(String key, String expectedId) {
     assertEquals(expectedId, CedarNodePermission.getId(key));
+  }
+
+  /**
+   * The search index stores each grant as one of these keys and queries for the same keys, so the
+   * format is stored data: a change hides every indexed grant until the index is rebuilt.
+   */
+  @ParameterizedTest
+  @CsvSource({"VIEWER,viewer", "EDITOR,editor", "MANAGER,manager"})
+  void materializedGrantKeysJoinThePrincipalAndTheRoleValue(ResourceRole role, String storedRole) {
+    String key = CedarNodeMaterializedPermissions.getKey(USER_ID, role);
+
+    assertEquals(USER_ID + "|" + storedRole, key);
+    assertEquals(USER_ID, CedarNodePermission.getId(key));
+  }
+
+  /**
+   * The graph and the search index store the everybody group's share as "read", "write" or nothing,
+   * and search widens a user's role from the value it reads back.
+   */
+  @Test
+  void everybodyShareValuesReadBackAsTheirPermission() throws Exception {
+    assertSame(NodeSharePermission.READ, mapper.readValue("\"read\"", NodeSharePermission.class));
+    assertSame(NodeSharePermission.WRITE, mapper.readValue("\"write\"", NodeSharePermission.class));
+    assertSame(NodeSharePermission.NONE, mapper.readValue("\"viewer\"", NodeSharePermission.class));
+    assertSame(NodeSharePermission.NONE, NodeSharePermission.forValue(null));
+    assertEquals("\"read\"", mapper.writeValueAsString(NodeSharePermission.READ));
+    assertEquals("\"write\"", mapper.writeValueAsString(NodeSharePermission.WRITE));
+    assertEquals("null", mapper.writeValueAsString(NodeSharePermission.NONE));
   }
 
   @Test
