@@ -6,9 +6,12 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.metadatacenter.model.CedarResourceType;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -94,5 +97,45 @@ class CedarResourceIdTest {
         "a trailing slash shifts the segments, so the uuid is read as the collection");
     assertNull(CedarFQResourceId.build("0f5a3b0e-6f1a-4d1b-9c2e-1a2b3c4d5e6f"));
     assertNull(CedarFQResourceId.build(""));
+  }
+
+  @Test
+  void anUppercaseUuidIsReadWholeAndKeepsItsSpelling() {
+    String iri = "https://repo.metadatacenter.org/templates/0F5A3B0E-6F1A-4D1B-9C2E-1A2B3C4D5E6F";
+
+    CedarFQResourceId id = CedarFQResourceId.build(iri);
+
+    assertSame(CedarResourceType.TEMPLATE, id.getType());
+    assertEquals("0F5A3B0E-6F1A-4D1B-9C2E-1A2B3C4D5E6F", id.getUuid());
+    assertEquals(iri, id.toString());
+  }
+
+  /**
+   * An identifier is its IRI, whatever class carries it: a caller that builds an untyped identifier
+   * and one that builds a typed identifier for the same resource hold equal identifiers. Equality is
+   * symmetric and agrees with the hash code, so a set or map treats every class alike. A user's IRI
+   * once compared only with other user identifiers, in one direction.
+   */
+  @Test
+  void identifiersAreEqualByTheirIriWhateverTheirClass() {
+    List<CedarResourceId> sameIri = List.of(CedarUserId.build(ID), CedarGroupId.build(ID),
+        CedarCategoryId.build(ID), CedarFolderId.build(ID), CedarTemplateId.build(ID),
+        CedarUntypedSchemaArtifactId.build(ID), CedarUntypedFilesystemResourceId.build(ID));
+    for (CedarResourceId first : sameIri) {
+      for (CedarResourceId second : sameIri) {
+        String pair = first.getClass().getSimpleName() + " against " + second.getClass().getSimpleName();
+        assertEquals(first, second, pair);
+        assertEquals(first.hashCode(), second.hashCode(), pair);
+      }
+    }
+    assertEquals(1, new HashSet<>(sameIri).size());
+  }
+
+  @Test
+  void identifiersOfOneTypeAreEqualByTheirText() {
+    assertEquals(CedarGroupId.build(ID), CedarGroupId.build(ID));
+    assertEquals(CedarGroupId.build(ID).hashCode(), CedarGroupId.build(ID).hashCode());
+    assertEquals(CedarUserId.build(ID), CedarUserId.build(ID));
+    assertNotEquals(CedarUserId.build(ID), CedarUserId.build(ID + "x"));
   }
 }

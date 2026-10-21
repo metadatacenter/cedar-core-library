@@ -60,6 +60,9 @@ public enum SystemComponent {
   }
 
   public static SystemComponent getFor(ServerName serverName) {
+    if (serverName == null) {
+      return null;
+    }
     for (SystemComponent sc : values()) {
       if (sc.getServerName() == serverName) {
         return sc;

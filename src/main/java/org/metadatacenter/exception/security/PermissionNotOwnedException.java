@@ -1,6 +1,7 @@
 package org.metadatacenter.exception.security;
 
 import org.metadatacenter.error.CedarErrorKey;
+import org.metadatacenter.error.CedarErrorType;
 import org.metadatacenter.http.CedarResponseStatus;
 
 public class PermissionNotOwnedException extends CedarAccessException {
@@ -9,6 +10,7 @@ public class PermissionNotOwnedException extends CedarAccessException {
     super("The current actor does not own the required permission: '" + permissionName + "'.",
         CedarErrorKey.PERMISSION_NOT_OWNED, null, null);
     errorPack.parameter("permissionName", permissionName);
+    errorPack.errorType(CedarErrorType.PERMISSION);
     errorPack.status(CedarResponseStatus.FORBIDDEN);
   }
 }

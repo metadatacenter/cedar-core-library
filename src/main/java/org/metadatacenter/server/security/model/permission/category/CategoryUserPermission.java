@@ -3,7 +3,7 @@ package org.metadatacenter.server.security.model.permission.category;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.metadatacenter.server.security.model.user.CedarUserExtract;
 
-@JsonIgnoreProperties({"asUserIdPermissionPair", "key"})
+@JsonIgnoreProperties({"asUserIdPermissionPair"})
 public class CategoryUserPermission extends AbstractCategoryPermission {
 
   private CedarUserExtract user;
@@ -22,11 +22,6 @@ public class CategoryUserPermission extends AbstractCategoryPermission {
 
   public void setUser(CedarUserExtract user) {
     this.user = user;
-  }
-
-  @Override
-  protected String getObjectId() {
-    return user.getId();
   }
 
   public CategoryPermissionUserPermissionPair getAsUserIdPermissionPair() {

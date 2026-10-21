@@ -30,6 +30,17 @@ class CedarAccessExceptionTest {
     assertEquals(errorKey, refusal.getErrorPack().getErrorKey());
   }
 
+  /**
+   * The error type names the kind of refusal, and a client that reads it must reach the same verdict as
+   * one that reads the status: a permission the caller lacks is no reason to authenticate again.
+   */
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("refusals")
+  void eachRefusalsErrorTypeAgreesWithItsStatus(String name, CedarAccessException refusal,
+                                               CedarResponseStatus status, CedarErrorKey errorKey) {
+    assertEquals(status, refusal.getErrorPack().getErrorType().getStatus());
+  }
+
   private static Stream<Arguments> refusals() {
     IOException cause = new IOException("the user service did not answer");
     return Stream.of(

@@ -46,4 +46,9 @@ class SystemComponentTest {
     assertNull(ServerName.forName("Resource"));
     assertNull(ServerName.forName(null));
   }
+
+  @Test
+  void noServerNameFindsNoComponent() {
+    assertNull(SystemComponent.getFor(null));
+  }
 }

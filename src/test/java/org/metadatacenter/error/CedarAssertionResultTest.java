@@ -72,4 +72,48 @@ class CedarAssertionResultTest {
     assertEquals(CedarErrorKey.GROUP_ALREADY_PRESENT, pack.getErrorKey());
     assertEquals("Group", pack.getParameters().get("schema:name"));
   }
+
+  /**
+   * The status, type, keys and suggested action all start as non-null defaults, so a merge that took
+   * every non-null value overwrote the assertion's decisions with the caller's defaults: a 403 with a
+   * key and a type came back as a 500 with neither, still marked as resolved.
+   */
+  @Test
+  @DisplayName("Merging a caller's pack takes only what that pack set")
+  void mergeTakesOnlyWhatTheCallersPackSet() {
+    CedarAssertionResult assertion = new CedarAssertionResult("m")
+        .errorKey(CedarErrorKey.GROUP_ALREADY_PRESENT)
+        .errorReasonKey(CedarErrorReasonKey.SYSTEM_FOLDER)
+        .forbidden();
+    assertion.getErrorPack().errorType(CedarErrorType.PERMISSION).suggestedAction(CedarSuggestedAction.REQUEST_ROLE);
+
+    assertion.mergeErrorPack(new CedarErrorPack().message("caller"));
+
+    CedarErrorPack pack = assertion.getErrorPack();
+    assertEquals(CedarResponseStatus.FORBIDDEN, pack.getStatus());
+    assertTrue(pack.hasResolvedStatus());
+    assertEquals(CedarErrorKey.GROUP_ALREADY_PRESENT, pack.getErrorKey());
+    assertEquals(CedarErrorReasonKey.SYSTEM_FOLDER, pack.getErrorReasonKey());
+    assertEquals(CedarErrorType.PERMISSION, pack.getErrorType());
+    assertEquals(CedarSuggestedAction.REQUEST_ROLE, pack.getSuggestedAction());
+    assertEquals("caller", pack.getMessage());
+  }
+
+  /**
+   * A caller's type without a status is applied as {@link CedarErrorPack#errorType} applies it: it
+   * supplies the status only when the assertion chose none.
+   */
+  @Test
+  @DisplayName("A caller's error type supplies a status only where the assertion chose none")
+  void aCallersErrorTypeSuppliesAStatusOnlyWhereNoneWasChosen() {
+    CedarAssertionResult unstatused = new CedarAssertionResult("m");
+    unstatused.mergeErrorPack(new CedarErrorPack().errorType(CedarErrorType.NOT_FOUND));
+    assertEquals(CedarResponseStatus.NOT_FOUND, unstatused.getErrorPack().getStatus());
+    assertEquals(CedarErrorType.NOT_FOUND, unstatused.getErrorPack().getErrorType());
+
+    CedarAssertionResult forbidden = new CedarAssertionResult("m").forbidden();
+    forbidden.mergeErrorPack(new CedarErrorPack().errorType(CedarErrorType.NOT_FOUND));
+    assertEquals(CedarResponseStatus.FORBIDDEN, forbidden.getErrorPack().getStatus());
+    assertEquals(CedarErrorType.NOT_FOUND, forbidden.getErrorPack().getErrorType());
+  }
 }

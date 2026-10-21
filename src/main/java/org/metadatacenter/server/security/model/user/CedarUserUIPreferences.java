@@ -47,6 +47,7 @@ public class CedarUserUIPreferences {
   }
 
   public CedarUserUIPreferences(String jsonSource) {
+    this();
     try {
       CedarUserUIPreferences deser = JsonMapper.TOLERANT_MAPPER.readValue(
           jsonSource, CedarUserUIPreferences.class);

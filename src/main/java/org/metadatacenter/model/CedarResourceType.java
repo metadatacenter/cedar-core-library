@@ -110,6 +110,9 @@ public enum CedarResourceType {
   }
 
   public static CedarResourceType forAtType(String atType) {
+    if (AtType.STATIC_FIELD.equals(atType)) {
+      return FIELD;
+    }
     if (atType != null) {
       for (CedarResourceType t : values()) {
         if (atType.equals(t.getAtType())) {

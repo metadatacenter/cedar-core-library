@@ -90,4 +90,27 @@ public class CedarUserUIPreferencesTest {
     Assertions.assertTrue(preferences.getInfoPanel().isOpened());
     Assertions.assertEquals("dark", preferences.getStylesheet());
   }
+
+  @Test
+  public void anUnrecognizedViewModeOrSortDirectionCostsOnlyThatValue() throws Exception {
+    CedarUserUIPreferences preferences = asStoredInTheGraph("{\"stylesheet\":\"dark\","
+        + "\"folderView\":{\"viewMode\":\"tiles\",\"sortDirection\":\"sideways\",\"sortBy\":\"name\"}}");
+
+    Assertions.assertEquals("dark", preferences.getStylesheet());
+    Assertions.assertNotNull(preferences.getFolderView());
+    Assertions.assertNull(preferences.getFolderView().getViewMode());
+    Assertions.assertNull(preferences.getFolderView().getSortDirection());
+    Assertions.assertEquals("name", preferences.getFolderView().getSortBy());
+  }
+
+  @Test
+  public void aStoredRecordThatCannotBeReadLeavesTheDefaults() throws Exception {
+    CedarUserUIPreferences preferences = asStoredInTheGraph("{\"stylesheet\":");
+    CedarUserUIPreferences defaults = new CedarUserUIPreferences();
+
+    Assertions.assertEquals(JsonMapper.STRICT_MAPPER.writeValueAsString(defaults),
+        JsonMapper.STRICT_MAPPER.writeValueAsString(preferences));
+    Assertions.assertNotNull(preferences.getFolderView());
+    Assertions.assertNotNull(preferences.getResourceTypeFilters());
+  }
 }

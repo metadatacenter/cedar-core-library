@@ -49,10 +49,6 @@ public class CurrentUserCategoryPermissions {
         : Collections.unmodifiableSet(EnumSet.copyOf(capabilities));
   }
 
-  public void applyAuthority(CategoryAuthority authority) {
-    applyAccess(authority, authority.capabilities());
-  }
-
   public void applyAccess(CategoryAuthority authority, Set<CategoryCapability> effectiveCapabilities) {
     setOwner(authority.owner());
     setRole(authority.role());
@@ -61,10 +57,6 @@ public class CurrentUserCategoryPermissions {
 
   public CategoryRole getCurrentUserRole() {
     return role;
-  }
-
-  public void setCurrentUserRole(CategoryRole currentUserRole) {
-    setRole(currentUserRole);
   }
 
   public boolean isCanRead() {
