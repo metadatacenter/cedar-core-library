@@ -213,6 +213,30 @@ class ResourcePermissionModelTest {
     assertTrue(ResourceRole.EDITOR.provides(CedarResourceType.FOLDER, ResourceCapability.MOVE_INTO_FOLDER));
   }
 
+  /**
+   * Search turns a required role into the grant keys that satisfy it through {@code includes}, and the
+   * search index and the graph's grant reader keep the stronger of two grants through {@code strongest}.
+   */
+  @Test
+  void strongerRolesIncludeWeakerOnesAndWinWhicheverComesFirst() {
+    List<ResourceRole> weakestFirst = List.of(ResourceRole.VIEWER, ResourceRole.EDITOR, ResourceRole.MANAGER);
+    assertEquals(EnumSet.allOf(ResourceRole.class), EnumSet.copyOf(weakestFirst));
+
+    for (ResourceRole held : weakestFirst) {
+      for (ResourceRole other : weakestFirst) {
+        boolean atLeastAsStrong = weakestFirst.indexOf(held) >= weakestFirst.indexOf(other);
+        ResourceRole stronger = atLeastAsStrong ? held : other;
+        assertEquals(atLeastAsStrong, held.includes(other), held + " includes " + other);
+        assertSame(stronger, ResourceRole.strongest(held, other));
+        assertSame(stronger, ResourceRole.strongest(other, held));
+      }
+      assertFalse(held.includes(null));
+      assertSame(held, ResourceRole.strongest(null, held));
+      assertSame(held, ResourceRole.strongest(held, null));
+    }
+    assertNull(ResourceRole.strongest(null, null));
+  }
+
   @Test
   void ownershipAddsTransferWithoutBecomingAnotherRole() {
     ResourceAuthority manager = new ResourceAuthority(ResourceRole.MANAGER, false);
@@ -385,6 +409,45 @@ class ResourcePermissionModelTest {
     assertFalse(json.has("canCreate"));
     assertFalse(json.has("canWrite"));
     assertFalse(json.has("canCopy"));
+  }
+
+  /**
+   * The permission updaters pass the capabilities the policy settled on, which administrative
+   * permissions can widen beyond the role. The user is shown those, beside the role they hold.
+   */
+  @Test
+  void appliedAccessReportsTheEffectiveCapabilitiesBesideTheHeldRole() {
+    CurrentUserResourcePermissions permissions = new CurrentUserResourcePermissions();
+    Set<ResourceCapability> effective = EnumSet.of(
+        ResourceCapability.READ_RESOURCE, ResourceCapability.MANAGE_GRANTS);
+
+    permissions.applyAccess(new ResourceAuthority(ResourceRole.VIEWER, false), effective);
+    effective.add(ResourceCapability.DELETE_RESOURCE);
+
+    assertSame(ResourceRole.VIEWER, permissions.getRole());
+    assertFalse(permissions.isOwner());
+    assertEquals(Set.of(ResourceCapability.READ_RESOURCE, ResourceCapability.MANAGE_GRANTS),
+        permissions.getCapabilities(), "a later change to the caller's set does not reach the record");
+    assertThrows(UnsupportedOperationException.class,
+        () -> permissions.getCapabilities().add(ResourceCapability.DELETE_RESOURCE));
+  }
+
+  /** The resource server refuses to publish or to create a draft unless that action was made available. */
+  @Test
+  void theVersionCommandsAreAllowedOnlyWhileTheirActionIsAvailable() {
+    CurrentUserResourcePermissions permissions = new CurrentUserResourcePermissions();
+    assertFalse(permissions.isCanPublish());
+    assertFalse(permissions.isCanCreateDraft());
+
+    permissions.setActionAvailable(ResourceAction.PUBLISH, true);
+    assertTrue(permissions.isCanPublish());
+    assertFalse(permissions.isCanCreateDraft());
+
+    permissions.setActionAvailable(ResourceAction.CREATE_DRAFT, true);
+    permissions.setActionAvailable(ResourceAction.PUBLISH, false);
+    assertFalse(permissions.isCanPublish());
+    assertTrue(permissions.isCanCreateDraft());
+    assertEquals(Set.of(ResourceAction.CREATE_DRAFT), permissions.getAvailableActions());
   }
 
   @Test
