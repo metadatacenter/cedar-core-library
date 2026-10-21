@@ -7,7 +7,6 @@ public enum ResourceAction {
   COPY_FROM_RESOURCE("copyFromResource"),
   CREATE_DRAFT("createDraft"),
   PUBLISH("publish"),
-  SUBMIT("submit"),
   POPULATE("populate"),
   ENABLE_OPENVIEW("enableOpenView"),
   DISABLE_OPENVIEW("disableOpenView");

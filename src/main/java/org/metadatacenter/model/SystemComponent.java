@@ -6,12 +6,9 @@ public enum SystemComponent {
   SERVER_MESSAGING(ServerName.MESSAGING),
   SERVER_REPO(ServerName.REPO),
   SERVER_RESOURCE(ServerName.RESOURCE),
-  SERVER_SCHEMA(ServerName.SCHEMA),
-  SERVER_SUBMISSION(ServerName.SUBMISSION),
   SERVER_ARTIFACT(ServerName.ARTIFACT),
   SERVER_TERMINOLOGY(ServerName.TERMINOLOGY),
   SERVER_USER(ServerName.USER),
-  SERVER_VALUERECOMMENDER(ServerName.VALUERECOMMENDER),
   SERVER_WORKER(ServerName.WORKER),
   SERVER_OPENVIEW(ServerName.OPENVIEW),
   SERVER_MONITOR(ServerName.MONITOR),
@@ -36,7 +33,7 @@ public enum SystemComponent {
   KEYCLOAK_SERVER("keycloak-server"), // Keycloak itself: its datasource, ports and CA, from standalone.xml
   KEYCLOAK_EVENT_LISTENER("keycloak-event-listener"), // the CEDAR listener deployed into Keycloak
   CEDAR_CLI("cedar-cli"), // the Python CLI: build, release and mode management
-  UTIL_BIN("util-bin"), // shell scripts in cedar-util/bin
+  UTIL_BIN("util-bin"), // shell scripts in cedar-development/bin/util
   ALL("all"); // generic case, include all variables
 
   private ServerName serverName;
