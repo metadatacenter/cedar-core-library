@@ -46,14 +46,6 @@ public class CurrentUserResourcePermissions {
     this.capabilities = immutableEnumSet(capabilities, ResourceCapability.class);
   }
 
-  public void removeCapabilities(ResourceCapability... capabilitiesToRemove) {
-    EnumSet<ResourceCapability> retained = copyCapabilities();
-    for (ResourceCapability capability : capabilitiesToRemove) {
-      retained.remove(capability);
-    }
-    setCapabilities(retained);
-  }
-
   public Set<ResourceAction> getAvailableActions() {
     return availableActions;
   }
@@ -84,10 +76,6 @@ public class CurrentUserResourcePermissions {
 
   public ResourceRole getCurrentUserRole() {
     return role;
-  }
-
-  public void setCurrentUserRole(ResourceRole currentUserRole) {
-    setRole(currentUserRole);
   }
 
   public boolean isOwner() {
@@ -186,10 +174,6 @@ public class CurrentUserResourcePermissions {
 
   public void setPublishErrorKey(CedarErrorKey publishErrorKey) {
     this.publishErrorKey = publishErrorKey;
-  }
-
-  private EnumSet<ResourceCapability> copyCapabilities() {
-    return capabilities.isEmpty() ? EnumSet.noneOf(ResourceCapability.class) : EnumSet.copyOf(capabilities);
   }
 
   private EnumSet<ResourceAction> copyActions() {

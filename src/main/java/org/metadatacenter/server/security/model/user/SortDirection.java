@@ -1,5 +1,6 @@
 package org.metadatacenter.server.security.model.user;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum SortDirection {
@@ -17,6 +18,7 @@ public enum SortDirection {
     return value;
   }
 
+  @JsonCreator
   public static SortDirection forValue(String v) {
     for (SortDirection sd : SortDirection.values()) {
       if (sd.getValue().equals(v)) {

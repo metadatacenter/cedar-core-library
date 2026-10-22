@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CedarFQResourceId {
-  private static final String CEDAR_URL_REGEX = ".*(http.*)://(.*)/(.*)/([0-9a-z-]*)";
+  private static final String CEDAR_URL_REGEX = ".*(http.*)://(.*)/(.*)/([0-9a-zA-Z-]*)";
   private static final Pattern CEDAR_URL_PATTERN = Pattern.compile(CEDAR_URL_REGEX);
 
   private static final Logger log = LoggerFactory.getLogger(CedarFQResourceId.class);

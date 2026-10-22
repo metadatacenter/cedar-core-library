@@ -4,7 +4,6 @@ import org.metadatacenter.http.CedarResponseStatus;
 import org.metadatacenter.operation.CedarOperationDescriptor;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CedarErrorPack {
@@ -53,24 +52,29 @@ public class CedarErrorPack {
       objects.putAll(other.getObjects());
       entities.putAll(other.getEntities());
       suggestedAction = other.getSuggestedAction();
-      originalException = normalizeException(other.getOriginalException());
+      originalException = other.getOriginalException();
       sourceException = other.getSourceException();
       operation = other.getOperation();
     }
   }
 
+  /**
+   * Takes what {@code other} set and keeps everything else. The status, the type, the keys and the
+   * suggested action all start at a default rather than null, so the merge takes a status only when it
+   * was chosen, and each of the others only when it differs from NONE. The type is applied through
+   * {@link #errorType(CedarErrorType)}, so it supplies a status only where none was chosen.
+   */
   public void merge(CedarErrorPack other) {
-    if (other.status != null) {
-      status = other.getStatus();
-      statusChosenExplicitly = statusChosenExplicitly || other.statusChosenExplicitly;
+    if (other.statusChosenExplicitly) {
+      status(other.getStatus());
     }
-    if (other.errorType != null) {
-      errorType = other.getErrorType();
+    if (other.errorType != null && other.errorType != CedarErrorType.NONE) {
+      errorType(other.getErrorType());
     }
-    if (other.errorKey != null) {
+    if (other.errorKey != null && other.errorKey != CedarErrorKey.NONE) {
       errorKey = other.getErrorKey();
     }
-    if (other.errorReasonKey != null) {
+    if (other.errorReasonKey != null && other.errorReasonKey != CedarErrorReasonKey.NONE) {
       errorReasonKey = other.getErrorReasonKey();
     }
     if (other.message != null) {
@@ -88,11 +92,11 @@ public class CedarErrorPack {
       entities.clear();
       entities.putAll(other.getEntities());
     }
-    if (other.suggestedAction != null) {
+    if (other.suggestedAction != null && other.suggestedAction != CedarSuggestedAction.NONE) {
       suggestedAction = other.getSuggestedAction();
     }
     if (other.originalException != null) {
-      originalException = normalizeException(other.getOriginalException());
+      originalException = other.getOriginalException();
     }
     if (other.sourceException != null) {
       sourceException = other.getSourceException();
@@ -233,8 +237,8 @@ public class CedarErrorPack {
   }
 
   public CedarErrorPack sourceException(Exception sourceException) {
-    this.originalException = normalizeException(sourceException);
-    this.sourceException = new CedarErrorPackException(normalizeException(sourceException));
+    this.originalException = sourceException;
+    this.sourceException = new CedarErrorPackException(sourceException);
     return this;
   }
 
@@ -258,21 +262,6 @@ public class CedarErrorPack {
   public void resetSourceException() {
     this.originalException = null;
     this.sourceException = null;
-  }
-
-  public static Exception normalizeException(Exception otherException) {
-    if (otherException == null) {
-      return null;
-    }
-    CedarErrorPackNormalizerRegistry normalizerRegistry = CedarErrorPackNormalizerRegistry.getInstance();
-    List<CedarErrorPackNormalizer> normalizers = normalizerRegistry.getNormalizers();
-    for (CedarErrorPackNormalizer normalizer : normalizers) {
-      Exception normalized = normalizer.normalize(otherException);
-      if (normalized != null) {
-        return normalized;
-      }
-    }
-    return otherException;
   }
 
 }

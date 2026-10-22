@@ -10,10 +10,12 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.metadatacenter.server.security.model.auth.CedarNodeGroupPermission;
+import org.metadatacenter.server.security.model.auth.CedarNodeMaterializedPermissions;
 import org.metadatacenter.server.security.model.auth.CedarNodePermission;
 import org.metadatacenter.server.security.model.auth.CedarNodePermissionsWithExtract;
 import org.metadatacenter.server.security.model.auth.CedarNodeUserPermission;
 import org.metadatacenter.server.security.model.auth.CurrentUserResourcePermissions;
+import org.metadatacenter.server.security.model.auth.NodeSharePermission;
 import org.metadatacenter.model.CedarResourceType;
 import org.metadatacenter.server.security.model.permission.resource.ResourceAction;
 import org.metadatacenter.server.security.model.permission.resource.ResourceActionPolicy;
@@ -101,6 +103,34 @@ class ResourcePermissionModelTest {
     assertEquals(expectedId, CedarNodePermission.getId(key));
   }
 
+  /**
+   * The search index stores each grant as one of these keys and queries for the same keys, so the
+   * format is stored data: a change hides every indexed grant until the index is rebuilt.
+   */
+  @ParameterizedTest
+  @CsvSource({"VIEWER,viewer", "EDITOR,editor", "MANAGER,manager"})
+  void materializedGrantKeysJoinThePrincipalAndTheRoleValue(ResourceRole role, String storedRole) {
+    String key = CedarNodeMaterializedPermissions.getKey(USER_ID, role);
+
+    assertEquals(USER_ID + "|" + storedRole, key);
+    assertEquals(USER_ID, CedarNodePermission.getId(key));
+  }
+
+  /**
+   * The graph and the search index store the everybody group's share as "read", "write" or nothing,
+   * and search widens a user's role from the value it reads back.
+   */
+  @Test
+  void everybodyShareValuesReadBackAsTheirPermission() throws Exception {
+    assertSame(NodeSharePermission.READ, mapper.readValue("\"read\"", NodeSharePermission.class));
+    assertSame(NodeSharePermission.WRITE, mapper.readValue("\"write\"", NodeSharePermission.class));
+    assertSame(NodeSharePermission.NONE, mapper.readValue("\"viewer\"", NodeSharePermission.class));
+    assertSame(NodeSharePermission.NONE, NodeSharePermission.forValue(null));
+    assertEquals("\"read\"", mapper.writeValueAsString(NodeSharePermission.READ));
+    assertEquals("\"write\"", mapper.writeValueAsString(NodeSharePermission.WRITE));
+    assertEquals("null", mapper.writeValueAsString(NodeSharePermission.NONE));
+  }
+
   @Test
   void resolvedAclConvertsOwnerUsersAndGroupsToARequest() {
     CedarNodePermissionsWithExtract resolved = resolvedAcl();
@@ -181,6 +211,30 @@ class ResourcePermissionModelTest {
     assertTrue(ResourceRole.MANAGER.provides(CedarResourceType.TEMPLATE, ResourceCapability.MANAGE_OPENVIEW));
     assertFalse(ResourceRole.EDITOR.provides(CedarResourceType.TEMPLATE, ResourceCapability.CREATE_IN_FOLDER));
     assertTrue(ResourceRole.EDITOR.provides(CedarResourceType.FOLDER, ResourceCapability.MOVE_INTO_FOLDER));
+  }
+
+  /**
+   * Search turns a required role into the grant keys that satisfy it through {@code includes}, and the
+   * search index and the graph's grant reader keep the stronger of two grants through {@code strongest}.
+   */
+  @Test
+  void strongerRolesIncludeWeakerOnesAndWinWhicheverComesFirst() {
+    List<ResourceRole> weakestFirst = List.of(ResourceRole.VIEWER, ResourceRole.EDITOR, ResourceRole.MANAGER);
+    assertEquals(EnumSet.allOf(ResourceRole.class), EnumSet.copyOf(weakestFirst));
+
+    for (ResourceRole held : weakestFirst) {
+      for (ResourceRole other : weakestFirst) {
+        boolean atLeastAsStrong = weakestFirst.indexOf(held) >= weakestFirst.indexOf(other);
+        ResourceRole stronger = atLeastAsStrong ? held : other;
+        assertEquals(atLeastAsStrong, held.includes(other), held + " includes " + other);
+        assertSame(stronger, ResourceRole.strongest(held, other));
+        assertSame(stronger, ResourceRole.strongest(other, held));
+      }
+      assertFalse(held.includes(null));
+      assertSame(held, ResourceRole.strongest(null, held));
+      assertSame(held, ResourceRole.strongest(held, null));
+    }
+    assertNull(ResourceRole.strongest(null, null));
   }
 
   @Test
@@ -355,6 +409,45 @@ class ResourcePermissionModelTest {
     assertFalse(json.has("canCreate"));
     assertFalse(json.has("canWrite"));
     assertFalse(json.has("canCopy"));
+  }
+
+  /**
+   * The permission updaters pass the capabilities the policy settled on, which administrative
+   * permissions can widen beyond the role. The user is shown those, beside the role they hold.
+   */
+  @Test
+  void appliedAccessReportsTheEffectiveCapabilitiesBesideTheHeldRole() {
+    CurrentUserResourcePermissions permissions = new CurrentUserResourcePermissions();
+    Set<ResourceCapability> effective = EnumSet.of(
+        ResourceCapability.READ_RESOURCE, ResourceCapability.MANAGE_GRANTS);
+
+    permissions.applyAccess(new ResourceAuthority(ResourceRole.VIEWER, false), effective);
+    effective.add(ResourceCapability.DELETE_RESOURCE);
+
+    assertSame(ResourceRole.VIEWER, permissions.getRole());
+    assertFalse(permissions.isOwner());
+    assertEquals(Set.of(ResourceCapability.READ_RESOURCE, ResourceCapability.MANAGE_GRANTS),
+        permissions.getCapabilities(), "a later change to the caller's set does not reach the record");
+    assertThrows(UnsupportedOperationException.class,
+        () -> permissions.getCapabilities().add(ResourceCapability.DELETE_RESOURCE));
+  }
+
+  /** The resource server refuses to publish or to create a draft unless that action was made available. */
+  @Test
+  void theVersionCommandsAreAllowedOnlyWhileTheirActionIsAvailable() {
+    CurrentUserResourcePermissions permissions = new CurrentUserResourcePermissions();
+    assertFalse(permissions.isCanPublish());
+    assertFalse(permissions.isCanCreateDraft());
+
+    permissions.setActionAvailable(ResourceAction.PUBLISH, true);
+    assertTrue(permissions.isCanPublish());
+    assertFalse(permissions.isCanCreateDraft());
+
+    permissions.setActionAvailable(ResourceAction.CREATE_DRAFT, true);
+    permissions.setActionAvailable(ResourceAction.PUBLISH, false);
+    assertFalse(permissions.isCanPublish());
+    assertTrue(permissions.isCanCreateDraft());
+    assertEquals(Set.of(ResourceAction.CREATE_DRAFT), permissions.getAvailableActions());
   }
 
   @Test

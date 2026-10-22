@@ -77,15 +77,6 @@ public enum RelationLabel {
     return null;
   }
 
-  /** Return the relationship written before the later legacy-name migration. */
-  public static RelationLabel forResourceRole(ResourceRole role) {
-    return switch (role) {
-      case VIEWER -> CANREAD;
-      case EDITOR -> EDITOR_ROLE;
-      case MANAGER -> CANWRITE;
-    };
-  }
-
   public static RelationLabel forCategoryRole(CategoryRole role) {
     if (role != null) {
       for (RelationLabel t : values()) {

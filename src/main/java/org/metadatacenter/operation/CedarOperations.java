@@ -21,7 +21,7 @@ public final class CedarOperations {
   }
 
   public static CedarCreateOperation create(Class clazz, String primaryIdAttributeName, CedarParameter primaryIdAttributeValue) {
-    return new CedarCreateOperation(clazz, primaryIdAttributeName, primaryIdAttributeValue);
+    return new CedarCreateOperation(clazz, primaryIdAttributeName, primaryIdAttributeValue.stringValue());
   }
 
   public static CedarCreateOperation create(Class clazz, String primaryIdAttributeName, String primaryIdAttributeValue) {

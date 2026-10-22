@@ -1,5 +1,6 @@
 package org.metadatacenter.server.security.model.user;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ViewMode {
@@ -17,6 +18,7 @@ public enum ViewMode {
     return value;
   }
 
+  @JsonCreator
   public static ViewMode forValue(String v) {
     for (ViewMode vm : ViewMode.values()) {
       if (vm.getValue().equals(v)) {

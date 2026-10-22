@@ -13,6 +13,8 @@ import org.metadatacenter.server.security.model.user.CedarGroupExtract;
 import org.metadatacenter.server.security.model.user.CedarUser;
 import org.metadatacenter.server.security.model.user.CedarUserExtract;
 
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -103,6 +105,28 @@ class CategoryPermissionModelTest {
         new CategoryAuthority(CategoryRole.CLASSIFIER, false).capabilities());
     assertFalse(CategoryRole.EDITOR.provides(CategoryCapability.MANAGE_GRANTS));
     assertTrue(CategoryRole.MANAGER.provides(CategoryCapability.MOVE_CATEGORY));
+  }
+
+  /**
+   * A user's authority on a category is the strongest of the roles they hold on it and its ancestors,
+   * folded pairwise in whatever order the graph returns them.
+   */
+  @Test
+  void theStrongerOfTwoRolesWinsWhicheverComesFirst() {
+    List<CategoryRole> weakestFirst = List.of(
+        CategoryRole.VIEWER, CategoryRole.CLASSIFIER, CategoryRole.EDITOR, CategoryRole.MANAGER);
+    assertEquals(EnumSet.allOf(CategoryRole.class), EnumSet.copyOf(weakestFirst));
+
+    for (CategoryRole held : weakestFirst) {
+      for (CategoryRole other : weakestFirst) {
+        CategoryRole stronger = weakestFirst.indexOf(held) >= weakestFirst.indexOf(other) ? held : other;
+        assertSame(stronger, CategoryRole.strongest(held, other), held + " against " + other);
+        assertSame(stronger, CategoryRole.strongest(other, held), other + " against " + held);
+      }
+      assertSame(held, CategoryRole.strongest(null, held));
+      assertSame(held, CategoryRole.strongest(held, null));
+    }
+    assertNull(CategoryRole.strongest(null, null));
   }
 
   @Test
