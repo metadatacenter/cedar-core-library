@@ -20,6 +20,8 @@ public class CedarUserUIPreferences {
 
   private CedarUserUIInfoPanel infoPanel;
 
+  private CedarUserUIWorkspace workspace;
+
   private CedarUserUITemplateEditor templateEditor;
 
   private CedarUserUIMetadataEditor metadataEditor;
@@ -40,6 +42,7 @@ public class CedarUserUIPreferences {
     resourcePublicationStatusFilter = new CedarUserUIResourcePublicationStatusFilter();
     resourceVersionFilter = new CedarUserUIResourceVersionFilter();
     infoPanel = new CedarUserUIInfoPanel();
+    workspace = new CedarUserUIWorkspace();
     templateEditor = new CedarUserUITemplateEditor();
     metadataEditor = new CedarUserUIMetadataEditor();
     metadataEditorV2 = new CedarUserUIMetadataEditorV2();
@@ -56,6 +59,10 @@ public class CedarUserUIPreferences {
       resourcePublicationStatusFilter = deser.resourcePublicationStatusFilter;
       resourceVersionFilter = deser.resourceVersionFilter;
       infoPanel = deser.infoPanel;
+      // A stored null keeps the defaults; a record written before the object existed reads them anyway.
+      if (deser.workspace != null) {
+        workspace = deser.workspace;
+      }
       templateEditor = deser.templateEditor;
       metadataEditor = deser.metadataEditor;
       metadataEditorV2 = deser.metadataEditorV2;
@@ -109,6 +116,14 @@ public class CedarUserUIPreferences {
 
   public void setInfoPanel(CedarUserUIInfoPanel infoPanel) {
     this.infoPanel = infoPanel;
+  }
+
+  public CedarUserUIWorkspace getWorkspace() {
+    return workspace;
+  }
+
+  public void setWorkspace(CedarUserUIWorkspace workspace) {
+    this.workspace = workspace;
   }
 
   public CedarUserUITemplateEditor getTemplateEditor() {
