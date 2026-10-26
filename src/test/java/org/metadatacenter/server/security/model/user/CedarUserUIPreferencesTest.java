@@ -2,7 +2,11 @@ package org.metadatacenter.server.security.model.user;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.metadatacenter.model.CedarResourceType;
 import org.metadatacenter.util.json.JsonMapper;
+
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * The graph stores a user's interface preferences as one JSON string, written by the strict mapper,
@@ -101,6 +105,57 @@ public class CedarUserUIPreferencesTest {
     Assertions.assertNull(preferences.getFolderView().getViewMode());
     Assertions.assertNull(preferences.getFolderView().getSortDirection());
     Assertions.assertEquals("name", preferences.getFolderView().getSortBy());
+  }
+
+  @Test
+  public void aRecordStoredBeforeTheWorkspaceListingExistedReadsWithItsDefaults() throws Exception {
+    CedarUserUIPreferences older = asStoredInTheGraph("{\"stylesheet\":\"dark\"}");
+    CedarUserUIPreferences cleared = asStoredInTheGraph("{\"workspace\":null}");
+
+    for (CedarUserUIPreferences preferences : new CedarUserUIPreferences[]{older, cleared}) {
+      CedarUserUIWorkspace workspace = preferences.getWorkspace();
+      Assertions.assertTrue(workspace.getResourceTypes().isEmpty());
+      Assertions.assertNull(workspace.getModified());
+      Assertions.assertEquals(ResourceVersionFilter.ALL, workspace.getVersion());
+      Assertions.assertEquals(ResourceSortField.NAME, workspace.getSortBy());
+      Assertions.assertEquals(SortDirection.ASC, workspace.getSortDirection());
+      Assertions.assertFalse(workspace.isFoldersFirst());
+      Assertions.assertEquals(ViewMode.GRID, workspace.getViewMode());
+    }
+  }
+
+  @Test
+  public void theWorkspaceListingReadsBackWithEveryChoiceItHolds() throws Exception {
+    CedarUserUIPreferences preferences = asStoredInTheGraph("{\"workspace\":{"
+        + "\"resourceTypes\":[\"folder\",\"template\"],\"modified\":\"custom\","
+        + "\"modifiedAfter\":\"2026-01-31\",\"modifiedBefore\":\"2026-10-23\",\"version\":\"latest\","
+        + "\"sortBy\":\"lastUpdatedOnTS\",\"sortDirection\":\"desc\",\"foldersFirst\":true,\"viewMode\":\"list\"}}");
+
+    CedarUserUIWorkspace workspace = preferences.getWorkspace();
+    Assertions.assertEquals(List.of(CedarResourceType.FOLDER, CedarResourceType.TEMPLATE), workspace.getResourceTypes());
+    Assertions.assertEquals(ResourceModifiedFilter.CUSTOM, workspace.getModified());
+    Assertions.assertEquals(LocalDate.of(2026, 1, 31), workspace.getModifiedAfter());
+    Assertions.assertEquals(LocalDate.of(2026, 10, 23), workspace.getModifiedBefore());
+    Assertions.assertEquals(ResourceVersionFilter.LATEST, workspace.getVersion());
+    Assertions.assertEquals(ResourceSortField.LAST_UPDATED_ON, workspace.getSortBy());
+    Assertions.assertEquals(SortDirection.DESC, workspace.getSortDirection());
+    Assertions.assertTrue(workspace.isFoldersFirst());
+    Assertions.assertEquals(ViewMode.LIST, workspace.getViewMode());
+    String stored = JsonMapper.STRICT_MAPPER.writeValueAsString(preferences);
+    Assertions.assertTrue(stored.contains("\"modifiedAfter\":\"2026-01-31\""), stored);
+    Assertions.assertEquals(stored, JsonMapper.STRICT_MAPPER.writeValueAsString(asStoredInTheGraph(stored)));
+  }
+
+  @Test
+  public void anUnrecognizedWorkspaceValueCostsOnlyThatValue() throws Exception {
+    CedarUserUIPreferences preferences = asStoredInTheGraph("{\"stylesheet\":\"dark\",\"workspace\":{"
+        + "\"resourceTypes\":[\"dataset\",\"field\"],\"modified\":\"quarter\",\"sortBy\":\"size\",\"viewMode\":\"list\"}}");
+
+    Assertions.assertEquals(List.of(CedarResourceType.FIELD), preferences.getWorkspace().getResourceTypes());
+    Assertions.assertNull(preferences.getWorkspace().getModified());
+    Assertions.assertNull(preferences.getWorkspace().getSortBy());
+    Assertions.assertEquals(ViewMode.LIST, preferences.getWorkspace().getViewMode());
+    Assertions.assertEquals("dark", preferences.getStylesheet());
   }
 
   @Test
