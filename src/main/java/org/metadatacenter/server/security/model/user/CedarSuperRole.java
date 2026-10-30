@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum CedarSuperRole {
   NORMAL("normal"),
-  BUILT_IN_ADMIN("builtInAdmin");
+  BUILT_IN_ADMIN("builtInAdmin"),
+  // Read access to the Monitor and nothing else, held alongside NORMAL: before it, reading the
+  // Monitor meant holding every administrative role.
+  MONITOR_VIEWER("monitorViewer");
 
   private final String value;
 
