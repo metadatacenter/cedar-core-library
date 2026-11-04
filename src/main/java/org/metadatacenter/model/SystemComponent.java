@@ -12,7 +12,6 @@ public enum SystemComponent {
   SERVER_WORKER(ServerName.WORKER),
   SERVER_OPENVIEW(ServerName.OPENVIEW),
   SERVER_MONITOR(ServerName.MONITOR),
-  SERVER_IMPEX(ServerName.IMPEX),
   SERVER_BRIDGE(ServerName.BRIDGE),
   FRONTEND_DEVELOPMENT("frontend-development"),
   FRONTEND_TEST("frontend-test"),

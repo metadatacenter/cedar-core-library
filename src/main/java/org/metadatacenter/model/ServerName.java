@@ -12,7 +12,6 @@ public enum ServerName {
   WORKER("worker", "CEDAR Worker Server"),
   OPENVIEW("openview", "CEDAR OpenView Server"),
   MONITOR("monitor", "CEDAR Monitor Server"),
-  IMPEX("impex", "CEDAR Impex Server"),
   BRIDGE("bridge", "CEDAR Bridge Server");
 
   private final String name;
