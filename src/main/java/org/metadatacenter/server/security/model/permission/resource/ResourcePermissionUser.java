@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 @Schema(name = "CedarUserIdReference",
     description = "A user named by identifier alone. A write uses it wherever a listing answers "
         + "with a fuller user reference, because only the identifier decides which user is meant.",
-    additionalProperties = Schema.AdditionalPropertiesValue.TRUE)
+    additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
 public class ResourcePermissionUser {
 
   private String id;
