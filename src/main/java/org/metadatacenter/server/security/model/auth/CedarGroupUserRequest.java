@@ -6,7 +6,7 @@ import org.metadatacenter.server.security.model.permission.resource.ResourcePerm
 @Schema(name = "GroupMemberRequest",
     description = "One user's place in a group, as a write states it. The user is named by "
         + "identifier alone. The two flags say what that user's standing should become.",
-    additionalProperties = Schema.AdditionalPropertiesValue.TRUE)
+    additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
 public class CedarGroupUserRequest {
 
   private ResourcePermissionUser user;

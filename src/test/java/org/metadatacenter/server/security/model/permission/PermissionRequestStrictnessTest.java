@@ -2,10 +2,26 @@ package org.metadatacenter.server.security.model.permission;
 
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.metadatacenter.server.security.model.auth.CedarGroupUserRequest;
+import org.metadatacenter.server.security.model.permission.category.CategoryPermissionGroup;
+import org.metadatacenter.server.security.model.permission.category.CategoryPermissionGroupPermissionPair;
+import org.metadatacenter.server.security.model.permission.category.CategoryPermissionRequest;
+import org.metadatacenter.server.security.model.permission.category.CategoryPermissionUser;
+import org.metadatacenter.server.security.model.permission.category.CategoryPermissionUserPermissionPair;
+import org.metadatacenter.server.security.model.permission.resource.ResourcePermissionGroup;
+import org.metadatacenter.server.security.model.permission.resource.ResourcePermissionGroupPermissionPair;
+import org.metadatacenter.server.security.model.permission.resource.ResourcePermissionUser;
+import org.metadatacenter.server.security.model.permission.resource.ResourcePermissionUserPermissionPair;
 import org.metadatacenter.server.security.model.permission.resource.ResourcePermissionsRequest;
 import org.metadatacenter.util.json.JsonMapper;
 
+import java.util.stream.Stream;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -62,5 +78,52 @@ class PermissionRequestStrictnessTest {
 
     assertThrows(UnrecognizedPropertyException.class,
         () -> JsonMapper.STRICT_MAPPER.readValue(withExtra, ResourcePermissionsRequest.class));
+  }
+  private static final String PERMISSIONS = """
+      {"owner": {"@id": "https://metadatacenter.org/users/1"%s},
+       "userPermissions": [{"user": {"@id": "https://metadatacenter.org/users/2"%s}, "role": "viewer"%s}],
+       "groupPermissions": [{"group": {"@id": "https://metadatacenter.org/groups/3"%s}, "role": "viewer"%s}]%s}
+      """;
+
+  private static final String GROUP_USER = """
+      {"user": {"@id": "https://metadatacenter.org/users/2"%s}, "administrator": false, "member": true%s}
+      """;
+
+  /**
+   * Every type a permission request is read into, each with the unknown key placed in its own object.
+   * The position is the format argument that receives the key; every other position stays empty.
+   */
+  static Stream<Arguments> everyRequestType() {
+    return Stream.of(
+        Arguments.of(ResourcePermissionsRequest.class, PERMISSIONS, 5, ResourcePermissionsRequest.class),
+        Arguments.of(ResourcePermissionsRequest.class, PERMISSIONS, 0, ResourcePermissionUser.class),
+        Arguments.of(ResourcePermissionsRequest.class, PERMISSIONS, 2, ResourcePermissionUserPermissionPair.class),
+        Arguments.of(ResourcePermissionsRequest.class, PERMISSIONS, 3, ResourcePermissionGroup.class),
+        Arguments.of(ResourcePermissionsRequest.class, PERMISSIONS, 4, ResourcePermissionGroupPermissionPair.class),
+        Arguments.of(CategoryPermissionRequest.class, PERMISSIONS, 5, CategoryPermissionRequest.class),
+        Arguments.of(CategoryPermissionRequest.class, PERMISSIONS, 1, CategoryPermissionUser.class),
+        Arguments.of(CategoryPermissionRequest.class, PERMISSIONS, 2, CategoryPermissionUserPermissionPair.class),
+        Arguments.of(CategoryPermissionRequest.class, PERMISSIONS, 3, CategoryPermissionGroup.class),
+        Arguments.of(CategoryPermissionRequest.class, PERMISSIONS, 4, CategoryPermissionGroupPermissionPair.class),
+        Arguments.of(CedarGroupUserRequest.class, GROUP_USER, 1, CedarGroupUserRequest.class),
+        Arguments.of(CedarGroupUserRequest.class, GROUP_USER, 0, ResourcePermissionUser.class));
+  }
+
+  @ParameterizedTest(name = "{3} inside {0}")
+  @MethodSource("everyRequestType")
+  void everyRequestTypeRefusesAnUnknownKeyAtItsOwnLevel(Class<?> requestType, String shape, int position,
+                                                        Class<?> refusingType) {
+    int positions = shape.split("%s", -1).length - 1;
+    Object[] declared = new Object[positions];
+    Object[] extended = new Object[positions];
+    java.util.Arrays.fill(declared, "");
+    java.util.Arrays.fill(extended, "");
+    extended[position] = ", \"unexpected\": true";
+
+    assertDoesNotThrow(() -> JsonMapper.STRICT_MAPPER.readValue(String.format(shape, declared), requestType));
+    UnrecognizedPropertyException refusal = assertThrows(UnrecognizedPropertyException.class,
+        () -> JsonMapper.STRICT_MAPPER.readValue(String.format(shape, extended), requestType));
+    assertEquals("unexpected", refusal.getPropertyName());
+    assertEquals(refusingType, refusal.getReferringClass());
   }
 }

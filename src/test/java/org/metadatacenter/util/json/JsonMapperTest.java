@@ -42,7 +42,9 @@ public class JsonMapperTest {
   public void unknownPropertyPoliciesAreExplicit() throws Exception {
     String json = "{\"when\":\"2026-09-02T10:30:15Z\",\"futureField\":true}";
 
-    Assertions.assertSame(JsonMapper.STRICT_MAPPER, JsonMapper.STRICT_MAPPER);
+    Assertions.assertSame(JsonMapper.STRICT_MAPPER, JsonMapper.MAPPER);
+    Assertions.assertThrows(UnrecognizedPropertyException.class,
+        () -> JsonMapper.MAPPER.readValue(json, Holder.class));
     Assertions.assertThrows(UnrecognizedPropertyException.class,
         () -> JsonMapper.STRICT_MAPPER.readValue(json, Holder.class));
     Assertions.assertThrows(UnrecognizedPropertyException.class,
